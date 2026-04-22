@@ -1,0 +1,2473 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
+<meta name="theme-color" content="#050814" />
+<title>QubicAI · Decentralized AI Compute Marketplace</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3E%3Cstop offset='0%25' stop-color='%2300d4ff'/%3E%3Cstop offset='100%25' stop-color='%23a855f7'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='100' height='100' rx='20' fill='url(%23g)'/%3E%3Ctext x='50' y='70' font-family='monospace' font-size='64' font-weight='900' text-anchor='middle' fill='white'%3EQ%3C/text%3E%3C/svg%3E"/>
+
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/motion@10.18.0/dist/motion.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;700&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+
+<style>
+  :root {
+    --qubic-cyan: #00d4ff;
+    --qubic-teal: #00f0c8;
+    --qubic-purple: #a855f7;
+    --qubic-pink: #ec4899;
+    --bg-deep: #050814;
+    --bg-card: rgba(10, 15, 32, 0.6);
+  }
+  * {
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+  html { scroll-behavior: smooth; }
+  body {
+    background: var(--bg-deep);
+    color: #e5e7eb;
+    overflow-x: hidden;
+    cursor: none;
+  }
+  .mono { font-family: 'JetBrains Mono', monospace; letter-spacing: -0.02em; }
+  .display { font-family: 'Space Grotesk', sans-serif; }
+
+  /* Noise texture overlay */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.06'/%3E%3C/svg%3E");
+    opacity: 0.4;
+    mix-blend-mode: overlay;
+    z-index: 1;
+  }
+
+  /* Grid background */
+  .grid-bg {
+    background-image:
+      linear-gradient(rgba(0, 212, 255, 0.04) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(0, 212, 255, 0.04) 1px, transparent 1px);
+    background-size: 48px 48px;
+    mask-image: radial-gradient(ellipse 100% 60% at 50% 0%, black 40%, transparent 100%);
+  }
+
+  /* Mesh gradient blobs */
+  .blob {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(80px);
+    opacity: 0.4;
+    pointer-events: none;
+    animation: blob-float 12s ease-in-out infinite;
+  }
+  @keyframes blob-float {
+    0%, 100% { transform: translate(0, 0) scale(1); }
+    33% { transform: translate(40px, -60px) scale(1.1); }
+    66% { transform: translate(-30px, 40px) scale(0.9); }
+  }
+
+  /* Text effects */
+  .gradient-text {
+    background: linear-gradient(135deg, #00d4ff 0%, #00f0c8 40%, #a855f7 80%, #ec4899 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-size: 200% 200%;
+    animation: gradient-shift 8s ease infinite;
+  }
+  @keyframes gradient-shift {
+    0%, 100% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+  }
+  .glow-text {
+    text-shadow: 0 0 40px rgba(0, 212, 255, 0.4), 0 0 80px rgba(168, 85, 247, 0.2);
+  }
+
+  /* Glassmorphism */
+  .glass {
+    background: rgba(10, 15, 32, 0.5);
+    backdrop-filter: blur(20px) saturate(180%);
+    -webkit-backdrop-filter: blur(20px) saturate(180%);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+  }
+  .glass-strong {
+    background: rgba(10, 15, 32, 0.7);
+    backdrop-filter: blur(24px) saturate(180%);
+    -webkit-backdrop-filter: blur(24px) saturate(180%);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+  }
+
+  /* Gradient border */
+  .gradient-border {
+    position: relative;
+    background: rgba(10, 15, 32, 0.6);
+    backdrop-filter: blur(20px);
+  }
+  .gradient-border::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    padding: 1px;
+    border-radius: inherit;
+    background: linear-gradient(135deg, rgba(0, 212, 255, 0.5), rgba(168, 85, 247, 0.3), rgba(236, 72, 153, 0.3));
+    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    pointer-events: none;
+  }
+
+  .glow-cyan { box-shadow: 0 0 60px rgba(0, 212, 255, 0.35), 0 0 120px rgba(0, 212, 255, 0.1); }
+  .glow-purple { box-shadow: 0 0 60px rgba(168, 85, 247, 0.3); }
+
+  /* Buttons */
+  .btn-primary {
+    position: relative;
+    background: linear-gradient(135deg, #00d4ff 0%, #00f0c8 100%);
+    color: #050814;
+    font-weight: 700;
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    overflow: hidden;
+  }
+  .btn-primary::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, #00f0c8 0%, #a855f7 100%);
+    opacity: 0;
+    transition: opacity 0.3s;
+  }
+  .btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 20px 60px -10px rgba(0, 212, 255, 0.6);
+  }
+  .btn-primary:hover::before { opacity: 1; }
+  .btn-primary > * { position: relative; z-index: 1; }
+
+  .btn-ghost {
+    background: rgba(255, 255, 255, 0.03);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(0, 212, 255, 0.2);
+    color: #00d4ff;
+    transition: all 0.25s;
+  }
+  .btn-ghost:hover {
+    background: rgba(0, 212, 255, 0.1);
+    border-color: rgba(0, 212, 255, 0.5);
+    transform: translateY(-2px);
+  }
+
+  /* Card hover */
+  .card-hover {
+    transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    overflow: hidden;
+  }
+  .card-hover::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(0, 212, 255, 0.08), transparent);
+    transition: left 0.6s;
+  }
+  .card-hover:hover {
+    transform: translateY(-6px);
+    border-color: rgba(0, 212, 255, 0.4);
+  }
+  .card-hover:hover::after { left: 100%; }
+
+  /* Animations */
+  @keyframes float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-15px); }
+  }
+  .float { animation: float 6s ease-in-out infinite; }
+
+  @keyframes pulse-ring {
+    0% { transform: scale(0.85); opacity: 0.9; }
+    100% { transform: scale(2.8); opacity: 0; }
+  }
+  .pulse-ring { animation: pulse-ring 2.8s cubic-bezier(0.4, 0, 0.6, 1) infinite; }
+
+  @keyframes tick-pulse {
+    0%, 100% { opacity: 0.3; transform: scale(1); }
+    50% { opacity: 1; transform: scale(1.3); }
+  }
+  .tick-dot { animation: tick-pulse 2s ease-in-out infinite; display: inline-block; }
+
+  @keyframes slide-up {
+    from { opacity: 0; transform: translateY(24px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .slide-up { animation: slide-up 0.5s cubic-bezier(0.4, 0, 0.2, 1) forwards; }
+
+  @keyframes scan {
+    0% { transform: translateX(-100%); }
+    100% { transform: translateX(200%); }
+  }
+  .scan-line::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 2px;
+    width: 100%;
+    background: linear-gradient(90deg, transparent 0%, #00d4ff 50%, transparent 100%);
+    animation: scan 4s linear infinite;
+  }
+
+  @keyframes spin-slow { to { transform: rotate(360deg); } }
+  .spin-slow { animation: spin-slow 20s linear infinite; }
+
+  /* Orbit system */
+  .orbit-container {
+    position: relative;
+    width: 100%;
+    max-width: 500px;
+    aspect-ratio: 1;
+    margin: 0 auto;
+  }
+  @keyframes orbit-rotate {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+  }
+  .orbit-ring {
+    position: absolute;
+    inset: 0;
+    border-radius: 50%;
+    border: 1px dashed rgba(0, 212, 255, 0.15);
+    animation: orbit-rotate linear infinite;
+  }
+  .orbit-dot {
+    position: absolute;
+    top: 50%;
+    left: -6px;
+    width: 12px;
+    height: 12px;
+    margin-top: -6px;
+    border-radius: 50%;
+  }
+  .orbit-dot::before {
+    content: '';
+    position: absolute;
+    inset: -8px;
+    border-radius: 50%;
+    background: inherit;
+    opacity: 0.4;
+    filter: blur(8px);
+  }
+
+  /* Scrollbar */
+  ::-webkit-scrollbar { width: 8px; height: 8px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: rgba(0, 212, 255, 0.2); border-radius: 8px; }
+  ::-webkit-scrollbar-thumb:hover { background: rgba(0, 212, 255, 0.4); }
+
+  /* Status dots */
+  .status-dot {
+    width: 8px; height: 8px; border-radius: 50%;
+    display: inline-block; position: relative;
+  }
+  .status-live { background: #22c55e; box-shadow: 0 0 12px #22c55e; }
+  .status-live::after {
+    content: ''; position: absolute; inset: -3px;
+    border-radius: 50%; border: 1px solid #22c55e;
+    animation: pulse-ring 2s infinite;
+  }
+  .status-bidding { background: #fbbf24; box-shadow: 0 0 12px #fbbf24; }
+  .status-executing { background: #00d4ff; box-shadow: 0 0 12px #00d4ff; }
+
+  /* Custom cursor */
+  .cursor-dot {
+    position: fixed;
+    top: 0; left: 0;
+    width: 8px; height: 8px;
+    background: #00d4ff;
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 9999;
+    mix-blend-mode: screen;
+    transition: transform 0.08s ease-out;
+  }
+  .cursor-ring {
+    position: fixed;
+    top: 0; left: 0;
+    width: 40px; height: 40px;
+    border: 1px solid rgba(0, 212, 255, 0.5);
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 9998;
+    transition: transform 0.15s ease-out, width 0.3s, height 0.3s, border-color 0.3s;
+  }
+  .cursor-ring.hover {
+    width: 60px; height: 60px;
+    border-color: rgba(0, 212, 255, 1);
+    background: rgba(0, 212, 255, 0.1);
+  }
+  @media (max-width: 768px) {
+    body { cursor: auto; }
+    .cursor-dot, .cursor-ring { display: none; }
+  }
+
+  /* Reveal on scroll */
+  .reveal {
+    opacity: 0;
+    transform: translateY(40px);
+    transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  .reveal.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  /* Modal */
+  .modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(5, 8, 20, 0.85);
+    backdrop-filter: blur(16px);
+    z-index: 100;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s;
+  }
+  .modal-overlay.active {
+    opacity: 1;
+    pointer-events: auto;
+  }
+  .modal-content {
+    transform: translateY(40px) scale(0.95);
+    transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  .modal-overlay.active .modal-content {
+    transform: translateY(0) scale(1);
+  }
+
+  /* Input styling */
+  .input-style {
+    background: rgba(5, 8, 20, 0.5);
+    border: 1px solid rgba(0, 212, 255, 0.2);
+    transition: all 0.2s;
+  }
+  .input-style:focus {
+    outline: none;
+    border-color: rgba(0, 212, 255, 0.6);
+    background: rgba(5, 8, 20, 0.8);
+    box-shadow: 0 0 0 3px rgba(0, 212, 255, 0.15);
+  }
+
+  /* Badge */
+  .badge-glow {
+    box-shadow: inset 0 0 20px rgba(0, 212, 255, 0.1), 0 0 20px rgba(0, 212, 255, 0.15);
+  }
+
+  /* Logo animation */
+  .logo-q {
+    background: linear-gradient(135deg, #00d4ff, #00f0c8, #a855f7);
+    background-size: 200% 200%;
+    animation: gradient-shift 4s ease infinite;
+  }
+
+  /* Hide chart canvas flash */
+  #tpsChart, #burnChart { display: block !important; }
+</style>
+</head>
+
+<body class="antialiased relative">
+
+<!-- ================================ -->
+<!-- QUBIC LOGO — official brand mark -->
+<!-- Two pillars (short + tall) evoking the Q of Qubic -->
+<!-- Source: qubic.org/brand-kit · brand cyan #23FFFF -->
+<!-- ================================ -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <linearGradient id="qubicGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#23ffff"/>
+      <stop offset="100%" stop-color="#00d4ff"/>
+    </linearGradient>
+
+    <!-- Official Qubic mark: short left pillar + tall right pillar -->
+    <symbol id="qubic-logo" viewBox="0 0 31 52">
+      <path fill="#23FFFF" d="M11.308 0H1.615C.723 0 0 .724 0 1.616v35.538c0 .892.723 1.616 1.615 1.616h9.693c.892 0 1.615-.724 1.615-1.616V1.616C12.923.724 12.2 0 11.308 0Zm17.23 0h-9.692c-.892 0-1.616.723-1.616 1.615v48.462c0 .892.724 1.615 1.616 1.615h9.692c.892 0 1.616-.723 1.616-1.615V1.615C30.154.723 29.43 0 28.538 0Z"/>
+    </symbol>
+
+    <!-- Gradient-filled variant for accent use -->
+    <symbol id="qubic-logo-gradient" viewBox="0 0 31 52">
+      <path fill="url(#qubicGrad)" d="M11.308 0H1.615C.723 0 0 .724 0 1.616v35.538c0 .892.723 1.616 1.615 1.616h9.693c.892 0 1.615-.724 1.615-1.616V1.616C12.923.724 12.2 0 11.308 0Zm17.23 0h-9.692c-.892 0-1.616.723-1.616 1.615v48.462c0 .892.724 1.615 1.616 1.615h9.692c.892 0 1.616-.723 1.616-1.615V1.615C30.154.723 29.43 0 28.538 0Z"/>
+    </symbol>
+
+    <!-- Full wordmark: mark + "qubic" lettering (from official brand kit) -->
+    <symbol id="qubic-wordmark" viewBox="0 0 189 56">
+      <path fill="#23FFFF" d="M12.858 2.155H3.166c-.892 0-1.615.723-1.615 1.615v35.54c0 .892.723 1.615 1.615 1.615h9.692c.893 0 1.616-.723 1.616-1.615V3.77c0-.892-.723-1.615-1.616-1.615Zm17.231-.001h-9.692c-.892 0-1.616.724-1.616 1.616v48.46c0 .892.724 1.616 1.616 1.616h9.692c.892 0 1.615-.724 1.615-1.616V3.77c0-.892-.723-1.616-1.615-1.616Z"/>
+      <path fill="#FEF8E8" d="M74.805 54.277V39.325h-.896c-.411.747-1.008 1.475-1.792 2.184-.784.672-1.792 1.232-3.024 1.68-1.195.448-2.688.672-4.48.672-2.315 0-4.443-.56-6.384-1.68-1.941-1.12-3.491-2.725-4.648-4.816-1.158-2.128-1.736-4.685-1.736-7.672v-.84c0-2.987.578-5.525 1.736-7.616 1.194-2.128 2.762-3.752 4.704-4.872 1.941-1.12 4.05-1.68 6.328-1.68 2.688 0 4.741.485 6.16 1.456 1.456.97 2.538 2.072 3.248 3.304h.896v-3.976h5.656v38.808h-5.768Zm-8.568-15.456c2.538 0 4.61-.803 6.216-2.408 1.605-1.605 2.408-3.901 2.408-6.888v-.504c0-2.95-.822-5.227-2.464-6.832-1.606-1.605-3.659-2.408-6.16-2.408-2.464 0-4.517.803-6.16 2.408-1.605 1.605-2.408 3.883-2.408 6.832v.504c0 2.987.803 5.283 2.408 6.888 1.642 1.605 3.696 2.408 6.16 2.408Zm29.49 4.76c-2.09 0-3.957-.467-5.6-1.4-1.642-.933-2.93-2.259-3.863-3.976-.934-1.717-1.4-3.77-1.4-6.16V15.469h5.768v16.184c0 2.39.597 4.163 1.792 5.32 1.194 1.12 2.856 1.68 4.984 1.68 2.352 0 4.237-.784 5.656-2.352 1.456-1.605 2.184-3.901 2.184-6.888V15.469h5.768v27.608h-5.656v-4.144h-.896c-.523 1.12-1.456 2.184-2.8 3.192-1.344.97-3.323 1.456-5.936 1.456Z"/>
+      <path fill="#FEF8E8" d="M138.993 43.581c-2.688 0-4.76-.448-6.216-1.456-1.419-1.008-2.483-2.147-3.192-3.416h-.896v3.808h-5.656V2.371h5.768v16.968h.896c.448-.747 1.045-1.493 1.792-2.24.747-.747 1.736-1.363 2.968-1.848 1.232-.485 2.744-.728 4.536-.728 2.315 0 4.443.56 6.384 1.68 1.941 1.12 3.491 2.725 4.648 4.816 1.195 2.091 1.792 4.611 1.792 7.56v.84c0 2.987-.597 5.544-1.792 7.672-1.194 2.091-2.744 3.696-4.648 4.816-1.904 1.12-4.032 1.68-6.384 1.68Zm-1.288-4.76c2.501 0 4.573-.803 6.216-2.408 1.643-1.605 2.464-3.883 2.464-6.832v-.504c0-2.987-.821-5.283-2.464-6.888-1.643-1.605-3.715-2.408-6.216-2.408-2.464 0-4.517.803-6.16 2.408-1.605 1.605-2.408 3.901-2.408 6.888v.504c0 2.95.803 5.227 2.408 6.832 1.643 1.605 3.696 2.408 6.16 2.408Zm21.013 4.256V15.469h5.768v27.608h-5.768Zm2.912-31.08a3.82 3.82 0 0 1-2.744-1.064c-.709-.71-1.064-1.587-1.064-2.632 0-1.045.355-1.923 1.064-2.632.747-.71 1.661-1.064 2.744-1.064 1.083 0 1.98.355 2.688 1.064.71.71 1.064 1.587 1.064 2.632 0 1.045-.354 1.923-1.064 2.632a3.594 3.594 0 0 1-2.688 1.064Zm21.82 31.584c-2.688 0-5.11-.597-7.28-1.792-2.128-1.232-3.808-2.93-5.04-5.096-1.232-2.203-1.848-4.779-1.848-7.728v-.728c0-2.95.616-5.525 1.848-7.728 1.232-2.203 2.912-3.92 5.04-5.152 2.17-1.232 4.592-1.848 7.28-1.848 2.762 0 5.06.541 6.888 1.624 1.867 1.083 3.285 2.483 4.256 4.2.971 1.68 1.514 3.472 1.624 5.376h-5.824c-.112-1.904-.803-3.453-2.072-4.648-1.232-1.232-3.024-1.848-5.376-1.848-2.464 0-4.48.803-6.048 2.408-1.568 1.605-2.352 3.92-2.352 6.944v.448c0 3.024.784 5.357 2.352 7 1.568 1.605 3.584 2.408 6.048 2.408 2.277 0 4.032-.597 5.264-1.792 1.269-1.195 2.016-2.688 2.24-4.48h5.824c-.149 1.867-.709 3.64-1.68 5.32-.971 1.68-2.408 3.06-4.312 4.144-1.867 1.045-4.144 1.568-6.832 1.568Z"/>
+    </symbol>
+  </defs>
+</svg>
+
+<!-- Custom cursor -->
+<div class="cursor-ring" id="cursorRing"></div>
+<div class="cursor-dot" id="cursorDot"></div>
+
+<!-- Ambient blobs -->
+<div class="blob bg-cyan-500/40 w-[500px] h-[500px] top-[10%] -left-[100px]" style="animation-delay: 0s"></div>
+<div class="blob bg-purple-500/30 w-[600px] h-[600px] top-[40%] -right-[100px]" style="animation-delay: 4s"></div>
+<div class="blob bg-pink-500/20 w-[400px] h-[400px] bottom-[10%] left-[30%]" style="animation-delay: 8s"></div>
+
+<!-- NAV -->
+<nav class="fixed top-0 w-full z-40 glass border-b border-cyan-500/10">
+  <div class="max-w-7xl mx-auto px-6 py-3 flex items-center justify-between">
+    <a href="#" class="flex items-center gap-3 group">
+      <div class="relative w-10 h-10 transition-transform duration-500 group-hover:rotate-[30deg]">
+        <svg class="w-full h-full drop-shadow-[0_0_10px_rgba(0,212,255,0.4)]"><use href="#qubic-logo"/></svg>
+      </div>
+      <div>
+        <div class="font-bold text-white display text-lg leading-none">QubicAI</div>
+        <div class="text-[10px] mono text-cyan-400/70 tracking-[0.2em] mt-1">COMPUTE · MAINNET</div>
+      </div>
+    </a>
+    <div class="hidden md:flex items-center gap-1 glass rounded-full px-2 py-1">
+      <a href="#how" class="px-4 py-2 rounded-full text-sm text-gray-400 hover:text-cyan-400 hover:bg-white/5 transition">How it works</a>
+      <a href="#demo" class="px-4 py-2 rounded-full text-sm text-gray-400 hover:text-cyan-400 hover:bg-white/5 transition">Marketplace</a>
+      <a href="#arch" class="px-4 py-2 rounded-full text-sm text-gray-400 hover:text-cyan-400 hover:bg-white/5 transition">Architecture</a>
+      <a href="#roadmap" class="px-4 py-2 rounded-full text-sm text-gray-400 hover:text-cyan-400 hover:bg-white/5 transition">Roadmap</a>
+    </div>
+    <div class="flex items-center gap-3">
+      <button onclick="openWallet()" class="btn-ghost px-4 py-2 rounded-xl text-sm hidden sm:flex items-center gap-2">
+        <i data-lucide="wallet" class="w-4 h-4"></i>
+        Connect Wallet
+      </button>
+      <button onclick="openJobModal()" class="btn-primary px-5 py-2 rounded-xl text-sm flex items-center gap-2">
+        <i data-lucide="zap" class="w-4 h-4"></i>
+        Launch App
+      </button>
+    </div>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="relative min-h-screen flex items-center pt-32 pb-16">
+  <div class="absolute inset-0 grid-bg opacity-80"></div>
+
+  <div class="relative max-w-7xl mx-auto px-6 grid lg:grid-cols-12 gap-12 items-center w-full">
+    <div class="lg:col-span-7 space-y-8">
+      <!-- Live indicator -->
+      <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full glass badge-glow border border-cyan-400/40 slide-up">
+        <span class="status-dot status-live"></span>
+        <span class="text-xs mono text-cyan-300 tracking-[0.15em] font-semibold">ORACLE MACHINES LIVE · EPOCH 218</span>
+        <span class="text-xs text-gray-500">·</span>
+        <span class="text-xs mono text-gray-400">tick <span id="navTick">18,429,102</span></span>
+      </div>
+
+      <h1 class="display text-5xl md:text-7xl lg:text-8xl font-black leading-[0.95] tracking-tight glow-text slide-up" style="animation-delay: 0.1s">
+        Decentralized AI<br />
+        compute at
+        <span class="gradient-text">15M TPS.</span><br />
+        Zero fees. <span class="gradient-text">Forever.</span>
+      </h1>
+
+      <p class="text-lg md:text-xl text-gray-400 max-w-2xl leading-relaxed slide-up" style="animation-delay: 0.2s">
+        The first compute marketplace built on <span class="text-cyan-400 font-semibold">bare-metal C++ smart contracts</span>.
+        Post LLM inference jobs, let Computors compete, get verifiable results — in 2 seconds.
+      </p>
+
+      <div class="flex flex-wrap gap-4 slide-up" style="animation-delay: 0.3s">
+        <button onclick="openJobModal()" class="btn-primary px-7 py-4 rounded-2xl text-base flex items-center gap-2">
+          <i data-lucide="rocket" class="w-5 h-5"></i>
+          Post your first job
+          <i data-lucide="arrow-right" class="w-4 h-4"></i>
+        </button>
+        <button class="btn-ghost px-7 py-4 rounded-2xl text-base flex items-center gap-2">
+          <i data-lucide="file-text" class="w-5 h-5"></i>
+          Read whitepaper
+        </button>
+      </div>
+
+      <!-- Metric strip -->
+      <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 pt-10 border-t border-white/5 slide-up" style="animation-delay: 0.4s">
+        <div>
+          <div class="text-2xl md:text-3xl font-black mono gradient-text">15.52M</div>
+          <div class="text-[10px] text-gray-500 mt-1 tracking-wider uppercase">TPS · CertiK verified</div>
+        </div>
+        <div>
+          <div class="text-2xl md:text-3xl font-black mono gradient-text">2.0s</div>
+          <div class="text-[10px] text-gray-500 mt-1 tracking-wider uppercase">Tick finality</div>
+        </div>
+        <div>
+          <div class="text-2xl md:text-3xl font-black mono gradient-text">676</div>
+          <div class="text-[10px] text-gray-500 mt-1 tracking-wider uppercase">Computors global</div>
+        </div>
+        <div>
+          <div class="text-2xl md:text-3xl font-black mono gradient-text">$0.00</div>
+          <div class="text-[10px] text-gray-500 mt-1 tracking-wider uppercase">Gas fees</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Neural network visualization -->
+    <div class="lg:col-span-5 flex items-center justify-center">
+      <div class="orbit-container float" id="neuralWrap">
+        <!-- Interactive neural canvas -->
+        <canvas id="neuralCanvas" class="absolute inset-0 w-full h-full rounded-full" aria-hidden="true"></canvas>
+
+        <!-- Center core (on top of canvas) -->
+        <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-40 h-40 rounded-3xl logo-q glow-cyan pointer-events-none z-10">
+          <div class="absolute inset-[3px] bg-[#050814]/90 backdrop-blur-sm rounded-[22px] flex flex-col items-center justify-center">
+            <svg class="w-16 h-16 mb-1 drop-shadow-[0_0_16px_rgba(35,255,255,0.55)]"><use href="#qubic-logo"/></svg>
+            <div class="text-[10px] mono text-cyan-400 tracking-widest">QUBIC CORE</div>
+            <div class="text-[9px] mono text-gray-500 mt-1">UPoW · C++</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="absolute bottom-8 left-1/2 -translate-x-1/2 text-cyan-400/50">
+    <i data-lucide="chevron-down" class="w-6 h-6 animate-bounce"></i>
+  </div>
+</section>
+
+<!-- TRUSTED BY / SOCIAL PROOF -->
+<section class="relative py-12 border-y border-white/5 bg-white/[0.01]">
+  <div class="max-w-7xl mx-auto px-6">
+    <div class="text-center text-[10px] mono text-gray-600 tracking-[0.3em] mb-6 uppercase">Built on Qubic's proven stack</div>
+    <div class="flex flex-wrap items-center justify-center gap-8 md:gap-16 opacity-60">
+      <div class="flex items-center gap-2"><i data-lucide="database" class="w-5 h-5 text-cyan-400"></i><span class="mono text-sm">Oracle Machines</span></div>
+      <div class="flex items-center gap-2"><i data-lucide="brain-circuit" class="w-5 h-5 text-purple-400"></i><span class="mono text-sm">Neuraxon 2.0</span></div>
+      <div class="flex items-center gap-2"><i data-lucide="shield-check" class="w-5 h-5 text-teal-400"></i><span class="mono text-sm">UPoW Consensus</span></div>
+      <div class="flex items-center gap-2"><i data-lucide="zap" class="w-5 h-5 text-pink-400"></i><span class="mono text-sm">Bare-metal C++</span></div>
+      <div class="flex items-center gap-2"><i data-lucide="flame" class="w-5 h-5 text-orange-400"></i><span class="mono text-sm">Dogecoin Mining</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- THE PROBLEM -->
+<section class="relative py-32">
+  <div class="max-w-7xl mx-auto px-6">
+    <div class="max-w-3xl mb-16 reveal">
+      <div class="text-[10px] mono text-pink-400 tracking-[0.3em] mb-4 uppercase">// The Problem</div>
+      <h2 class="display text-4xl md:text-6xl font-black text-white mb-6 leading-tight">
+        AI is <span class="gradient-text">centralized</span>,<br/>
+        expensive, and <span class="gradient-text">rate-limited.</span>
+      </h2>
+      <p class="text-xl text-gray-400 leading-relaxed">
+        Akash, Render, Gensyn — all run on slow, fee-heavy chains.<br/>
+        OpenAI? You pay per token, your prompts leak, and you're throttled.
+      </p>
+    </div>
+
+    <div class="grid md:grid-cols-3 gap-5">
+      <div class="p-8 rounded-3xl glass border border-red-500/20 card-hover reveal">
+        <div class="w-14 h-14 rounded-2xl bg-red-500/10 border border-red-500/20 flex items-center justify-center mb-6">
+          <i data-lucide="lock" class="w-6 h-6 text-red-400"></i>
+        </div>
+        <h3 class="display text-xl font-bold mb-3 text-white">Centralized gatekeepers</h3>
+        <p class="text-gray-400 text-sm leading-relaxed">OpenAI, Anthropic, AWS own the compute. They set prices, see your prompts, and can cut you off.</p>
+      </div>
+      <div class="p-8 rounded-3xl glass border border-red-500/20 card-hover reveal">
+        <div class="w-14 h-14 rounded-2xl bg-red-500/10 border border-red-500/20 flex items-center justify-center mb-6">
+          <i data-lucide="dollar-sign" class="w-6 h-6 text-red-400"></i>
+        </div>
+        <h3 class="display text-xl font-bold mb-3 text-white">Fees eat margins</h3>
+        <p class="text-gray-400 text-sm leading-relaxed">On Ethereum, a micropayment for one inference call costs more than the call itself. Solana is cheaper but still gated.</p>
+      </div>
+      <div class="p-8 rounded-3xl glass border border-red-500/20 card-hover reveal">
+        <div class="w-14 h-14 rounded-2xl bg-red-500/10 border border-red-500/20 flex items-center justify-center mb-6">
+          <i data-lucide="zap-off" class="w-6 h-6 text-red-400"></i>
+        </div>
+        <h3 class="display text-xl font-bold mb-3 text-white">Too slow for agents</h3>
+        <p class="text-gray-400 text-sm leading-relaxed">12s blocks on ETH make agentic AI impossible. Qubic's 2s ticks unlock a whole new category.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section id="how" class="relative py-32">
+  <div class="max-w-7xl mx-auto px-6">
+    <div class="text-center mb-20 reveal">
+      <div class="text-[10px] mono text-cyan-400 tracking-[0.3em] mb-4 uppercase">// How It Works</div>
+      <h2 class="display text-4xl md:text-6xl font-black text-white mb-4 leading-tight">Four steps.<br/><span class="gradient-text">Two seconds.</span> Zero trust.</h2>
+    </div>
+
+    <div class="grid md:grid-cols-4 gap-5">
+      <div class="relative p-6 rounded-3xl gradient-border card-hover reveal">
+        <div class="text-7xl font-black mono mb-4 gradient-text opacity-40">01</div>
+        <div class="w-12 h-12 rounded-xl bg-cyan-500/10 flex items-center justify-center mb-4">
+          <i data-lucide="upload-cloud" class="w-6 h-6 text-cyan-400"></i>
+        </div>
+        <h3 class="display text-lg font-bold mb-2 text-white">Post a job</h3>
+        <p class="text-sm text-gray-400 leading-relaxed">Upload your LLM prompt, training task, or inference workload. Set your max budget in QUBIC.</p>
+      </div>
+      <div class="relative p-6 rounded-3xl gradient-border card-hover reveal">
+        <div class="text-7xl font-black mono mb-4 gradient-text opacity-40">02</div>
+        <div class="w-12 h-12 rounded-xl bg-purple-500/10 flex items-center justify-center mb-4">
+          <i data-lucide="gavel" class="w-6 h-6 text-purple-400"></i>
+        </div>
+        <h3 class="display text-lg font-bold mb-2 text-white">Computors bid</h3>
+        <p class="text-sm text-gray-400 leading-relaxed">676 Computors worldwide compete in a 1-tick auction. Lowest price with sufficient stake wins.</p>
+      </div>
+      <div class="relative p-6 rounded-3xl gradient-border card-hover reveal">
+        <div class="text-7xl font-black mono mb-4 gradient-text opacity-40">03</div>
+        <div class="w-12 h-12 rounded-xl bg-teal-500/10 flex items-center justify-center mb-4">
+          <i data-lucide="cpu" class="w-6 h-6 text-teal-400"></i>
+        </div>
+        <h3 class="display text-lg font-bold mb-2 text-white">Bare-metal exec</h3>
+        <p class="text-sm text-gray-400 leading-relaxed">Your job runs on Qubic's C++ execution. No VM overhead. Same speed as local GPU.</p>
+      </div>
+      <div class="relative p-6 rounded-3xl gradient-border card-hover reveal">
+        <div class="text-7xl font-black mono mb-4 gradient-text opacity-40">04</div>
+        <div class="w-12 h-12 rounded-xl bg-pink-500/10 flex items-center justify-center mb-4">
+          <i data-lucide="shield-check" class="w-6 h-6 text-pink-400"></i>
+        </div>
+        <h3 class="display text-lg font-bold mb-2 text-white">Verified & paid</h3>
+        <p class="text-sm text-gray-400 leading-relaxed">Oracle Machines verify output hash. Payment released, QUBIC partially burned. Done.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- LIVE DEMO -->
+<section id="demo" class="relative py-32">
+  <div class="max-w-7xl mx-auto px-6">
+    <div class="text-center mb-16 reveal">
+      <div class="text-[10px] mono text-cyan-400 tracking-[0.3em] mb-4 uppercase">// Live Marketplace</div>
+      <h2 class="display text-4xl md:text-6xl font-black text-white mb-4 leading-tight">Watch it happen<br/><span class="gradient-text">in real-time.</span></h2>
+      <p class="text-gray-400 max-w-2xl mx-auto mt-4">Simulated preview. Jobs flow every tick (2s). Click "Post a job" to try the full flow.</p>
+    </div>
+
+    <div class="rounded-3xl gradient-border overflow-hidden relative reveal">
+      <div class="scan-line relative">
+        <div class="bg-black/40 border-b border-cyan-500/20 px-6 py-3 flex items-center gap-4">
+          <div class="flex gap-2">
+            <div class="w-3 h-3 rounded-full bg-red-500/60 hover:bg-red-500 transition"></div>
+            <div class="w-3 h-3 rounded-full bg-yellow-500/60 hover:bg-yellow-500 transition"></div>
+            <div class="w-3 h-3 rounded-full bg-green-500/60 hover:bg-green-500 transition"></div>
+          </div>
+          <div class="mono text-xs text-cyan-400/70">qubicai://marketplace/mainnet</div>
+          <div class="ml-auto flex items-center gap-4 text-xs mono">
+            <span class="text-gray-400"><span class="tick-dot text-cyan-400">●</span> Tick <span id="tickCounter" class="text-cyan-400 font-bold">18,429,102</span></span>
+            <span class="text-gray-400 hidden md:inline">Epoch <span class="text-purple-400 font-bold">218</span></span>
+          </div>
+        </div>
+      </div>
+
+      <div class="grid lg:grid-cols-3 gap-0">
+        <!-- Jobs feed -->
+        <div class="lg:col-span-2 p-6 border-r border-cyan-500/10">
+          <div class="flex items-center justify-between mb-6">
+            <h3 class="display font-bold text-white flex items-center gap-2">
+              <i data-lucide="activity" class="w-4 h-4 text-cyan-400"></i>
+              Active Jobs
+              <span class="text-xs mono text-gray-500 font-normal">streaming</span>
+            </h3>
+            <div class="flex gap-2">
+              <span class="text-xs px-3 py-1.5 rounded-full bg-cyan-500/10 border border-cyan-500/30 text-cyan-400 mono font-semibold">LLM · <span id="ctLLM">847</span></span>
+              <span class="text-xs px-3 py-1.5 rounded-full bg-purple-500/10 border border-purple-500/30 text-purple-400 mono font-semibold">TRAIN · <span id="ctTrain">142</span></span>
+              <span class="text-xs px-3 py-1.5 rounded-full bg-pink-500/10 border border-pink-500/30 text-pink-400 mono font-semibold">EMBED · <span id="ctEmbed">2013</span></span>
+            </div>
+          </div>
+          <div id="jobFeed" class="space-y-2 max-h-[520px] overflow-y-auto pr-2"></div>
+        </div>
+
+        <!-- Stats panel -->
+        <div class="p-6 bg-black/20">
+          <h3 class="display font-bold text-white mb-6 flex items-center gap-2">
+            <i data-lucide="bar-chart-3" class="w-4 h-4 text-cyan-400"></i>
+            Network Stats
+          </h3>
+
+          <!-- TPS live chart -->
+          <div class="mb-6">
+            <div class="flex justify-between text-xs mb-2">
+              <span class="text-gray-500 mono tracking-wider">JOBS / TICK</span>
+              <span class="mono text-cyan-400 font-bold" id="tpsLabel">42 j/t</span>
+            </div>
+            <div class="h-24 rounded-xl bg-black/40 p-2">
+              <canvas id="tpsChart"></canvas>
+            </div>
+          </div>
+
+          <div class="space-y-4">
+            <div>
+              <div class="flex justify-between text-xs mb-1.5">
+                <span class="text-gray-500 mono tracking-wider">ACTIVE COMPUTORS</span>
+                <span class="mono text-cyan-400 font-bold" id="statComputors">412 / 676</span>
+              </div>
+              <div class="h-1.5 bg-white/5 rounded-full overflow-hidden">
+                <div class="h-full logo-q" id="barComputors" style="width: 61%"></div>
+              </div>
+            </div>
+            <div>
+              <div class="flex justify-between text-xs mb-1.5">
+                <span class="text-gray-500 mono tracking-wider">GPU UTILIZATION</span>
+                <span class="mono text-purple-400 font-bold" id="statGPU">73%</span>
+              </div>
+              <div class="h-1.5 bg-white/5 rounded-full overflow-hidden">
+                <div class="h-full bg-gradient-to-r from-purple-500 to-pink-500" id="barGPU" style="width: 73%"></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="pt-5 mt-5 border-t border-white/5 space-y-3">
+            <div class="flex justify-between items-center">
+              <span class="text-gray-500 text-sm">Jobs (24h)</span>
+              <span class="mono text-white font-bold" id="stat24h">142,847</span>
+            </div>
+            <div class="flex justify-between items-center">
+              <span class="text-gray-500 text-sm">Avg latency</span>
+              <span class="mono text-green-400 font-bold">1.84s</span>
+            </div>
+            <div class="flex justify-between items-center">
+              <span class="text-gray-500 text-sm">QUBIC burned 24h</span>
+              <span class="mono text-pink-400 font-bold" id="statBurn">8.42M</span>
+            </div>
+          </div>
+
+          <!-- Price comparison -->
+          <div class="pt-5 mt-5 border-t border-white/5">
+            <div class="text-[10px] mono text-gray-500 tracking-widest mb-3 uppercase">Cost / 1k tokens</div>
+            <div class="space-y-2">
+              <div class="flex items-center gap-3">
+                <span class="text-xs w-16 text-gray-400">OpenAI</span>
+                <div class="flex-1 h-5 bg-red-500/10 rounded-md relative overflow-hidden">
+                  <div class="h-full bg-gradient-to-r from-red-500/60 to-red-400/60 rounded-md" style="width: 95%"></div>
+                  <span class="absolute right-2 top-1/2 -translate-y-1/2 text-[10px] mono text-white font-bold">$0.030</span>
+                </div>
+              </div>
+              <div class="flex items-center gap-3">
+                <span class="text-xs w-16 text-gray-400">Akash</span>
+                <div class="flex-1 h-5 bg-orange-500/10 rounded-md relative overflow-hidden">
+                  <div class="h-full bg-gradient-to-r from-orange-500/60 to-orange-400/60 rounded-md" style="width: 45%"></div>
+                  <span class="absolute right-2 top-1/2 -translate-y-1/2 text-[10px] mono text-white font-bold">$0.014</span>
+                </div>
+              </div>
+              <div class="flex items-center gap-3">
+                <span class="text-xs w-16 text-cyan-400 font-black">QubicAI</span>
+                <div class="flex-1 h-5 bg-cyan-500/10 rounded-md relative overflow-hidden">
+                  <div class="h-full logo-q rounded-md" style="width: 8%"></div>
+                  <span class="absolute right-12 top-1/2 -translate-y-1/2 text-[10px] mono text-cyan-400 font-black">$0.0023</span>
+                </div>
+              </div>
+            </div>
+            <div class="text-center mt-3 text-xs text-gray-500">
+              <span class="gradient-text font-black">92% cheaper</span> than OpenAI
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ARCHITECTURE -->
+<section id="arch" class="relative py-32">
+  <div class="max-w-7xl mx-auto px-6">
+    <div class="text-center mb-16 reveal">
+      <div class="text-[10px] mono text-purple-400 tracking-[0.3em] mb-4 uppercase">// Architecture</div>
+      <h2 class="display text-4xl md:text-6xl font-black text-white mb-4 leading-tight">Built on what<br/><span class="gradient-text">already works.</span></h2>
+      <p class="text-gray-400 max-w-2xl mx-auto mt-4">No new L1. No bridges. We stack on Qubic's existing primitives — Oracle Machines, Neuraxon, UPoW.</p>
+    </div>
+
+    <div class="grid lg:grid-cols-2 gap-8">
+      <!-- Left: stack -->
+      <div class="p-8 rounded-3xl glass-strong reveal">
+        <div class="flex items-center justify-between mb-6">
+          <div class="mono text-xs text-gray-500 tracking-widest">LAYERED STACK</div>
+          <div class="flex items-center gap-2 text-xs text-green-400">
+            <span class="status-dot status-live"></span>
+            <span class="mono">all layers live</span>
+          </div>
+        </div>
+        <div class="space-y-3">
+          <div class="group p-4 rounded-2xl bg-gradient-to-r from-cyan-500/15 to-teal-500/15 border border-cyan-500/30 hover:border-cyan-500/60 transition">
+            <div class="flex items-center justify-between">
+              <div>
+                <div class="font-bold text-white">QubicAI Marketplace</div>
+                <div class="text-xs text-gray-400 mt-1">Job posting · bidding · SDK · dApp</div>
+              </div>
+              <i data-lucide="layout-dashboard" class="w-6 h-6 text-cyan-400 group-hover:scale-110 transition"></i>
+            </div>
+          </div>
+          <div class="flex justify-center"><i data-lucide="arrow-down" class="w-4 h-4 text-cyan-500/40"></i></div>
+          <div class="group p-4 rounded-2xl bg-gradient-to-r from-purple-500/15 to-pink-500/15 border border-purple-500/30 hover:border-purple-500/60 transition">
+            <div class="flex items-center justify-between">
+              <div>
+                <div class="font-bold text-white">C++ Smart Contracts</div>
+                <div class="text-xs text-gray-400 mt-1">Escrow · auction · result verification</div>
+              </div>
+              <i data-lucide="file-code-2" class="w-6 h-6 text-purple-400 group-hover:scale-110 transition"></i>
+            </div>
+          </div>
+          <div class="flex justify-center"><i data-lucide="arrow-down" class="w-4 h-4 text-purple-500/40"></i></div>
+          <div class="grid grid-cols-2 gap-3">
+            <div class="group p-4 rounded-2xl bg-black/40 border border-cyan-500/20 hover:border-cyan-500/50 transition">
+              <i data-lucide="database" class="w-5 h-5 text-cyan-400 mb-2"></i>
+              <div class="font-bold text-white text-sm">Oracle Machines</div>
+              <div class="text-[10px] text-gray-400 mt-1">Output verif · 11k+ queries</div>
+            </div>
+            <div class="group p-4 rounded-2xl bg-black/40 border border-purple-500/20 hover:border-purple-500/50 transition">
+              <i data-lucide="brain-circuit" class="w-5 h-5 text-purple-400 mb-2"></i>
+              <div class="font-bold text-white text-sm">Neuraxon 2.0</div>
+              <div class="text-[10px] text-gray-400 mt-1">AI primitive layer</div>
+            </div>
+          </div>
+          <div class="flex justify-center"><i data-lucide="arrow-down" class="w-4 h-4 text-teal-500/40"></i></div>
+          <div class="group p-4 rounded-2xl bg-black/40 border border-teal-500/30 hover:border-teal-500/60 transition">
+            <div class="flex items-center justify-between">
+              <div>
+                <div class="font-bold text-white">Qubic Core · UPoW</div>
+                <div class="text-xs text-gray-400 mt-1">676 Computors · 2s ticks · feeless</div>
+              </div>
+              <i data-lucide="server" class="w-6 h-6 text-teal-400 group-hover:scale-110 transition"></i>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right: primitives -->
+      <div class="space-y-4">
+        <div class="p-6 rounded-3xl glass border border-cyan-500/20 card-hover reveal">
+          <div class="flex items-start gap-4">
+            <div class="w-12 h-12 rounded-2xl bg-cyan-500/10 border border-cyan-500/30 flex items-center justify-center shrink-0">
+              <i data-lucide="database" class="w-6 h-6 text-cyan-400"></i>
+            </div>
+            <div>
+              <h4 class="font-bold text-white mb-1">Oracles as output verifiers</h4>
+              <p class="text-sm text-gray-400 leading-relaxed">Already handling 11k+ queries. We reuse their hash verification to guarantee AI outputs — no need to trust any single Computor.</p>
+            </div>
+          </div>
+        </div>
+        <div class="p-6 rounded-3xl glass border border-purple-500/20 card-hover reveal">
+          <div class="flex items-start gap-4">
+            <div class="w-12 h-12 rounded-2xl bg-purple-500/10 border border-purple-500/30 flex items-center justify-center shrink-0">
+              <i data-lucide="brain-circuit" class="w-6 h-6 text-purple-400"></i>
+            </div>
+            <div>
+              <h4 class="font-bold text-white mb-1">Neuraxon 2.0 + Aigarth</h4>
+              <p class="text-sm text-gray-400 leading-relaxed">Trivalent-state neurons (−1/0/+1) running on Aigarth's evolutionary engine. Continuous learning, no ONNX glue. Papers submitted to AGI-26 and ALIFE-26.</p>
+            </div>
+          </div>
+        </div>
+        <div class="p-6 rounded-3xl glass border border-orange-500/20 card-hover reveal">
+          <div class="flex items-start gap-4">
+            <div class="w-12 h-12 rounded-2xl bg-orange-500/10 border border-orange-500/30 flex items-center justify-center shrink-0">
+              <i data-lucide="flame" class="w-6 h-6 text-orange-400"></i>
+            </div>
+            <div>
+              <h4 class="font-bold text-white mb-1">Deflationary by design</h4>
+              <p class="text-sm text-gray-400 leading-relaxed">Every job partially burns QUBIC. More AI compute → tighter supply. Mirrors the Dogecoin Mining Phase 2 burn model live since April 2026.</p>
+            </div>
+          </div>
+        </div>
+        <div class="p-6 rounded-3xl glass border border-pink-500/20 card-hover reveal">
+          <div class="flex items-start gap-4">
+            <div class="w-12 h-12 rounded-2xl bg-pink-500/10 border border-pink-500/30 flex items-center justify-center shrink-0">
+              <i data-lucide="shield" class="w-6 h-6 text-pink-400"></i>
+            </div>
+            <div>
+              <h4 class="font-bold text-white mb-1">Private by construction</h4>
+              <p class="text-sm text-gray-400 leading-relaxed">Prompts are encrypted client-side, decrypted only inside Computor's bare-metal sandbox. Never touch OpenAI, never train anyone else's model.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CASE STUDIES -->
+<section class="relative py-32">
+  <div class="max-w-7xl mx-auto px-6">
+    <div class="text-center mb-16 reveal">
+      <div class="text-[10px] mono text-pink-400 tracking-[0.3em] mb-4 uppercase">// Real Cases · Real Numbers</div>
+      <h2 class="display text-4xl md:text-6xl font-black text-white mb-4 leading-tight">Who's burning money<br/>on OpenAI <span class="gradient-text">right now?</span></h2>
+      <p class="text-gray-400 max-w-2xl mx-auto mt-4">Six concrete scenarios. Real pricing. Every number calculated from public OpenAI/AWS rates vs QubicAI target pricing.</p>
+    </div>
+
+    <!-- Case 1 — SaaS startup -->
+    <div class="grid lg:grid-cols-3 gap-5 mb-5">
+      <div class="lg:col-span-2 p-8 rounded-3xl glass-strong border border-cyan-500/30 reveal relative overflow-hidden">
+        <div class="absolute top-0 right-0 w-60 h-60 bg-cyan-500/20 rounded-full blur-3xl"></div>
+        <div class="relative">
+          <div class="flex items-center gap-3 mb-4">
+            <div class="text-[10px] mono text-cyan-400 tracking-widest uppercase">Case Study 01 · SaaS Startup</div>
+            <span class="px-2 py-0.5 rounded-full bg-cyan-500/10 border border-cyan-500/30 text-[10px] mono text-cyan-400">VERIFIED PRICING</span>
+          </div>
+          <h3 class="display text-3xl font-bold text-white mb-3">Marc, CTO of a Y Combinator AI SaaS</h3>
+          <p class="text-gray-300 mb-6 leading-relaxed">His product answers 8M customer-support tickets/month using GPT-4. Every ticket = ~1.2k input + 400 output tokens. Business is profitable but 64% of revenue goes to OpenAI.</p>
+
+          <div class="grid grid-cols-3 gap-4">
+            <div class="p-4 rounded-2xl bg-red-500/5 border border-red-500/20">
+              <div class="text-[10px] mono text-red-400 tracking-widest uppercase mb-1">OpenAI GPT-4</div>
+              <div class="mono text-2xl font-black text-red-400">$12,480</div>
+              <div class="text-xs text-gray-500">/ month</div>
+            </div>
+            <div class="p-4 rounded-2xl bg-cyan-500/5 border border-cyan-500/30">
+              <div class="text-[10px] mono text-cyan-400 tracking-widest uppercase mb-1">QubicAI</div>
+              <div class="mono text-2xl font-black text-cyan-400">$896</div>
+              <div class="text-xs text-gray-500">/ month</div>
+            </div>
+            <div class="p-4 rounded-2xl logo-q text-center">
+              <div class="text-[10px] mono text-[#050814] tracking-widest uppercase mb-1 font-black">SAVED/YR</div>
+              <div class="mono text-2xl font-black text-[#050814]">$139k</div>
+              <div class="text-xs text-[#050814]/80 font-semibold">= 2 senior hires</div>
+            </div>
+          </div>
+
+          <div class="mt-6 pt-6 border-t border-white/5 flex items-center gap-3 text-sm text-gray-400">
+            <i data-lucide="quote" class="w-5 h-5 text-cyan-400 shrink-0"></i>
+            <em>"We moved half our traffic to QubicAI in 2 weeks. Our burn rate dropped 30%. That's runway I can use to ship features."</em>
+          </div>
+        </div>
+      </div>
+
+      <div class="p-8 rounded-3xl bg-gradient-to-br from-cyan-500/10 to-transparent border border-cyan-500/30 reveal flex flex-col justify-between">
+        <div>
+          <div class="text-[10px] mono text-cyan-400 tracking-widest mb-3">THE MATH</div>
+          <div class="space-y-3 text-sm">
+            <div class="flex justify-between py-2 border-b border-white/5">
+              <span class="text-gray-400">Tickets/month</span>
+              <span class="mono text-white font-bold">8,000,000</span>
+            </div>
+            <div class="flex justify-between py-2 border-b border-white/5">
+              <span class="text-gray-400">Avg tokens/call</span>
+              <span class="mono text-white font-bold">1.6k</span>
+            </div>
+            <div class="flex justify-between py-2 border-b border-white/5">
+              <span class="text-gray-400">OpenAI $/1k</span>
+              <span class="mono text-red-400">$0.030</span>
+            </div>
+            <div class="flex justify-between py-2 border-b border-white/5">
+              <span class="text-gray-400">QubicAI $/1k</span>
+              <span class="mono text-cyan-400">$0.0023</span>
+            </div>
+            <div class="flex justify-between py-2">
+              <span class="text-gray-400">Saving</span>
+              <span class="mono text-green-400 font-black">−92.8%</span>
+            </div>
+          </div>
+        </div>
+        <div class="mt-6 p-3 rounded-xl bg-green-500/10 border border-green-500/30 text-center">
+          <div class="text-xs mono text-green-400 font-bold">ROI: day 1</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Case 2+3 compact -->
+    <div class="grid lg:grid-cols-2 gap-5 mb-5">
+      <!-- Hedge Fund -->
+      <div class="p-8 rounded-3xl glass border border-purple-500/30 reveal relative overflow-hidden card-hover">
+        <div class="absolute top-0 right-0 w-40 h-40 bg-purple-500/20 rounded-full blur-3xl"></div>
+        <div class="relative">
+          <div class="flex items-center justify-between mb-4">
+            <div class="text-[10px] mono text-purple-400 tracking-widest uppercase">Case 02 · Crypto Hedge Fund</div>
+            <div class="text-3xl">📈</div>
+          </div>
+          <h3 class="display text-2xl font-bold text-white mb-2">Alameda-style signal trading</h3>
+          <p class="text-gray-400 text-sm mb-6 leading-relaxed">Quant fund runs 10,000 LLM inferences/day analyzing news, tweets, filings. Each call = 3k tokens. They NEED real-time (2s latency or dead).</p>
+
+          <div class="grid grid-cols-2 gap-3 mb-4">
+            <div class="p-3 rounded-xl bg-red-500/5 border border-red-500/20 text-center">
+              <div class="text-[10px] text-gray-500 mb-1">GPT-4 daily</div>
+              <div class="mono text-xl font-black text-red-400">$4,500</div>
+            </div>
+            <div class="p-3 rounded-xl bg-purple-500/5 border border-purple-500/30 text-center">
+              <div class="text-[10px] text-purple-400 mb-1">QubicAI daily</div>
+              <div class="mono text-xl font-black text-purple-400">$380</div>
+            </div>
+          </div>
+          <div class="p-4 rounded-2xl bg-gradient-to-r from-purple-500/10 to-pink-500/10 border border-purple-500/30 text-center">
+            <div class="text-[10px] mono text-gray-400 uppercase tracking-widest">Annual edge</div>
+            <div class="mono text-3xl font-black gradient-text">+$1.5M</div>
+            <div class="text-xs text-gray-400 mt-1">pure alpha · no latency tradeoff</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Hospital -->
+      <div class="p-8 rounded-3xl glass border border-pink-500/30 reveal relative overflow-hidden card-hover">
+        <div class="absolute top-0 right-0 w-40 h-40 bg-pink-500/20 rounded-full blur-3xl"></div>
+        <div class="relative">
+          <div class="flex items-center justify-between mb-4">
+            <div class="text-[10px] mono text-pink-400 tracking-widest uppercase">Case 03 · Hospital Network</div>
+            <div class="text-3xl">🏥</div>
+          </div>
+          <h3 class="display text-2xl font-bold text-white mb-2">French hospital · HIPAA + RGPD</h3>
+          <p class="text-gray-400 text-sm mb-6 leading-relaxed">CHU wants to summarize 50k patient files/month. OpenAI = impossible (data leaves EU). On-prem = €420k GPU cluster. QubicAI bare-metal sandbox = compliant.</p>
+
+          <div class="grid grid-cols-3 gap-3 mb-4">
+            <div class="p-3 rounded-xl bg-red-500/5 border border-red-500/20 text-center">
+              <div class="text-[10px] text-gray-500 mb-1">OpenAI</div>
+              <div class="mono text-sm font-bold text-red-400">BANNED</div>
+            </div>
+            <div class="p-3 rounded-xl bg-orange-500/5 border border-orange-500/20 text-center">
+              <div class="text-[10px] text-gray-500 mb-1">On-prem</div>
+              <div class="mono text-lg font-black text-orange-400">€420k</div>
+            </div>
+            <div class="p-3 rounded-xl bg-pink-500/5 border border-pink-500/30 text-center">
+              <div class="text-[10px] text-pink-400 mb-1">QubicAI</div>
+              <div class="mono text-lg font-black text-pink-400">€340/mo</div>
+            </div>
+          </div>
+          <div class="flex items-center gap-2 text-xs mono text-green-400 justify-center py-2">
+            <i data-lucide="shield-check" class="w-4 h-4"></i>
+            Encrypted sandbox · verifiable on-chain
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Case 4+5+6 grid -->
+    <div class="grid lg:grid-cols-3 gap-5">
+      <!-- Gaming -->
+      <div class="p-6 rounded-3xl glass border border-teal-500/30 reveal card-hover">
+        <div class="flex items-center justify-between mb-3">
+          <div class="text-[10px] mono text-teal-400 tracking-widest uppercase">Case 04 · Gaming Studio</div>
+          <div class="text-2xl">🎮</div>
+        </div>
+        <h3 class="display text-xl font-bold text-white mb-2">Living NPCs in a 50k-player MMO</h3>
+        <p class="text-gray-400 text-sm mb-5 leading-relaxed">Every NPC speaks with LLM memory. 2M inference calls/day. OpenAI would kill the studio financially.</p>
+        <div class="space-y-2 text-sm">
+          <div class="flex justify-between p-2 rounded bg-red-500/5">
+            <span class="text-gray-400">OpenAI/mo</span>
+            <span class="mono text-red-400 font-bold">$198k</span>
+          </div>
+          <div class="flex justify-between p-2 rounded bg-teal-500/10 border border-teal-500/20">
+            <span class="text-gray-400">QubicAI/mo</span>
+            <span class="mono text-teal-400 font-bold">$14.2k</span>
+          </div>
+          <div class="text-center pt-2 text-xs mono text-green-400">UNLOCKS the feature entirely</div>
+        </div>
+      </div>
+
+      <!-- Research -->
+      <div class="p-6 rounded-3xl glass border border-purple-500/30 reveal card-hover">
+        <div class="flex items-center justify-between mb-3">
+          <div class="text-[10px] mono text-purple-400 tracking-widest uppercase">Case 05 · ETH Zurich Lab</div>
+          <div class="text-2xl">🎓</div>
+        </div>
+        <h3 class="display text-xl font-bold text-white mb-2">Fine-tuning Llama for biomedical</h3>
+        <p class="text-gray-400 text-sm mb-5 leading-relaxed">72h of 8×H100 training. AWS pricing is brutal. QubicAI lets miners bid with idle capacity.</p>
+        <div class="space-y-2 text-sm">
+          <div class="flex justify-between p-2 rounded bg-red-500/5">
+            <span class="text-gray-400">AWS p5.48xl</span>
+            <span class="mono text-red-400 font-bold">$48,400</span>
+          </div>
+          <div class="flex justify-between p-2 rounded bg-purple-500/10 border border-purple-500/20">
+            <span class="text-gray-400">QubicAI</span>
+            <span class="mono text-purple-400 font-bold">$3,200</span>
+          </div>
+          <div class="text-center pt-2 text-xs mono text-green-400">+ on-chain training attestation</div>
+        </div>
+      </div>
+
+      <!-- Agent -->
+      <div class="p-6 rounded-3xl glass border border-cyan-500/30 reveal card-hover">
+        <div class="flex items-center justify-between mb-3">
+          <div class="text-[10px] mono text-cyan-400 tracking-widest uppercase">Case 06 · Solo Builder</div>
+          <div class="text-2xl">🤖</div>
+        </div>
+        <h3 class="display text-xl font-bold text-white mb-2">24/7 autonomous X agent</h3>
+        <p class="text-gray-400 text-sm mb-5 leading-relaxed">1,000 decisions/day for posting, replying, research. Indie dev can't afford OpenAI.</p>
+        <div class="space-y-2 text-sm">
+          <div class="flex justify-between p-2 rounded bg-red-500/5">
+            <span class="text-gray-400">OpenAI/mo</span>
+            <span class="mono text-red-400 font-bold">$900</span>
+          </div>
+          <div class="flex justify-between p-2 rounded bg-cyan-500/10 border border-cyan-500/20">
+            <span class="text-gray-400">QubicAI/mo</span>
+            <span class="mono text-cyan-400 font-bold">$69</span>
+          </div>
+          <div class="text-center pt-2 text-xs mono text-green-400">From impossible → profitable</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ROI CALCULATOR -->
+<section class="relative py-32">
+  <div class="max-w-7xl mx-auto px-6">
+    <div class="text-center mb-16 reveal">
+      <div class="text-[10px] mono text-cyan-400 tracking-[0.3em] mb-4 uppercase">// ROI Calculator</div>
+      <h2 class="display text-4xl md:text-6xl font-black text-white mb-4 leading-tight">Calculate <span class="gradient-text">your savings.</span></h2>
+      <p class="text-gray-400 max-w-2xl mx-auto mt-4">Drag the slider. See how much you're currently overpaying OpenAI.</p>
+    </div>
+
+    <div class="max-w-4xl mx-auto p-8 md:p-12 rounded-3xl glass-strong border border-cyan-500/30 reveal">
+      <div class="mb-10">
+        <div class="flex items-end justify-between mb-4">
+          <div>
+            <div class="text-[10px] mono text-gray-500 tracking-widest uppercase mb-1">Monthly inference calls</div>
+            <div class="flex items-baseline gap-2">
+              <span id="roiCallsLabel" class="display text-5xl font-black gradient-text mono">5.0M</span>
+              <span class="text-sm text-gray-400">calls/month</span>
+            </div>
+          </div>
+          <div class="text-right">
+            <div class="text-[10px] mono text-gray-500 tracking-widest uppercase mb-1">Avg tokens / call</div>
+            <div class="mono text-white font-bold">1,500</div>
+          </div>
+        </div>
+        <input type="range" id="roiSlider" min="1" max="500" value="50" class="w-full h-2 bg-white/10 rounded-full appearance-none cursor-pointer slider-style">
+        <div class="flex justify-between text-[10px] mono text-gray-600 mt-2">
+          <span>100k</span><span>1M</span><span>10M</span><span>50M</span>
+        </div>
+      </div>
+
+      <div class="grid md:grid-cols-3 gap-4">
+        <div class="p-6 rounded-2xl bg-red-500/5 border border-red-500/30 text-center">
+          <div class="text-[10px] mono text-red-400 tracking-widest uppercase mb-2">OpenAI GPT-4</div>
+          <div class="mono text-3xl md:text-4xl font-black text-red-400" id="roiOpenai">$225,000</div>
+          <div class="text-xs text-gray-500 mt-1">per month</div>
+        </div>
+        <div class="p-6 rounded-2xl bg-cyan-500/5 border border-cyan-500/30 text-center">
+          <div class="text-[10px] mono text-cyan-400 tracking-widest uppercase mb-2">QubicAI</div>
+          <div class="mono text-3xl md:text-4xl font-black text-cyan-400" id="roiQubic">$17,250</div>
+          <div class="text-xs text-gray-500 mt-1">per month</div>
+        </div>
+        <div class="p-6 rounded-2xl logo-q text-center">
+          <div class="text-[10px] mono text-[#050814] tracking-widest uppercase mb-2 font-black">ANNUAL SAVINGS</div>
+          <div class="mono text-3xl md:text-4xl font-black text-[#050814]" id="roiSaved">$2.49M</div>
+          <div class="text-xs text-[#050814]/80 mt-1 font-semibold">re-invest into product</div>
+        </div>
+      </div>
+
+      <div class="mt-8 p-4 rounded-2xl bg-black/30 border border-white/5 flex items-center gap-3 text-sm">
+        <i data-lucide="info" class="w-5 h-5 text-cyan-400 shrink-0"></i>
+        <span class="text-gray-400">Pricing based on OpenAI GPT-4 Turbo public rates ($0.03/1k input+output blended) vs QubicAI target network pricing ($0.0023/1k).</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOR INVESTORS -->
+<section class="relative py-32">
+  <div class="max-w-7xl mx-auto px-6">
+    <div class="text-center mb-16 reveal">
+      <div class="text-[10px] mono text-purple-400 tracking-[0.3em] mb-4 uppercase">// For Investors</div>
+      <h2 class="display text-4xl md:text-6xl font-black text-white mb-4 leading-tight">Why this, <span class="gradient-text">why now,</span><br/>why Qubic.</h2>
+    </div>
+
+    <!-- Market sizing -->
+    <div class="grid md:grid-cols-3 gap-5 mb-12">
+      <div class="p-8 rounded-3xl glass border border-cyan-500/30 reveal">
+        <div class="text-[10px] mono text-cyan-400 tracking-widest uppercase mb-3">TAM · 2027</div>
+        <div class="display text-5xl font-black gradient-text mono mb-2">$407B</div>
+        <div class="text-sm text-gray-400 mb-4">Global AI compute market (Gartner, 2026)</div>
+        <div class="h-1 bg-white/5 rounded-full overflow-hidden">
+          <div class="h-full logo-q" style="width: 100%"></div>
+        </div>
+      </div>
+      <div class="p-8 rounded-3xl glass border border-purple-500/30 reveal">
+        <div class="text-[10px] mono text-purple-400 tracking-widest uppercase mb-3">SAM · Decentralized</div>
+        <div class="display text-5xl font-black gradient-text mono mb-2">$28B</div>
+        <div class="text-sm text-gray-400 mb-4">Decentralized compute segment (Akash, Render, Gensyn combined projection)</div>
+        <div class="h-1 bg-white/5 rounded-full overflow-hidden">
+          <div class="h-full bg-gradient-to-r from-purple-500 to-pink-500" style="width: 7%"></div>
+        </div>
+      </div>
+      <div class="p-8 rounded-3xl glass border border-pink-500/30 reveal">
+        <div class="text-[10px] mono text-pink-400 tracking-widest uppercase mb-3">SOM · Year 3</div>
+        <div class="display text-5xl font-black gradient-text mono mb-2">$180M</div>
+        <div class="text-sm text-gray-400 mb-4">QubicAI realistic capture at 0.6% of SAM</div>
+        <div class="h-1 bg-white/5 rounded-full overflow-hidden">
+          <div class="h-full bg-gradient-to-r from-pink-500 to-orange-500" style="width: 0.6%; min-width: 4px"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Thesis + competitive moat -->
+    <div class="grid lg:grid-cols-2 gap-5 mb-12">
+      <div class="p-8 rounded-3xl glass-strong border border-cyan-500/20 reveal">
+        <div class="flex items-center gap-3 mb-6">
+          <div class="w-12 h-12 rounded-2xl bg-cyan-500/10 border border-cyan-500/30 flex items-center justify-center">
+            <i data-lucide="trending-up" class="w-6 h-6 text-cyan-400"></i>
+          </div>
+          <h3 class="display text-2xl font-bold text-white">The thesis</h3>
+        </div>
+        <div class="space-y-4 text-gray-300">
+          <div class="flex items-start gap-3">
+            <span class="mono text-cyan-400 font-black">01</span>
+            <p><strong class="text-white">AI inference will 100× by 2028.</strong> Agents, AR glasses, embedded LLMs. Current compute can't scale at current prices.</p>
+          </div>
+          <div class="flex items-start gap-3">
+            <span class="mono text-cyan-400 font-black">02</span>
+            <p><strong class="text-white">Centralized providers will hit a wall.</strong> NVIDIA-bottlenecked. Regulatory risk. Privacy lawsuits starting 2026.</p>
+          </div>
+          <div class="flex items-start gap-3">
+            <span class="mono text-cyan-400 font-black">03</span>
+            <p><strong class="text-white">Only Qubic matches the throughput.</strong> 15.52M TPS · feeless · already live. Every other L1 is 100× too slow.</p>
+          </div>
+          <div class="flex items-start gap-3">
+            <span class="mono text-cyan-400 font-black">04</span>
+            <p><strong class="text-white">Community wants this.</strong> Come-from-Beyond publicly stated AI compute marketplace is the goal. We ship the app layer.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="p-8 rounded-3xl glass-strong border border-purple-500/20 reveal">
+        <div class="flex items-center gap-3 mb-6">
+          <div class="w-12 h-12 rounded-2xl bg-purple-500/10 border border-purple-500/30 flex items-center justify-center">
+            <i data-lucide="shield" class="w-6 h-6 text-purple-400"></i>
+          </div>
+          <h3 class="display text-2xl font-bold text-white">The moat</h3>
+        </div>
+        <div class="space-y-4">
+          <div class="p-4 rounded-2xl bg-black/30 border-l-2 border-cyan-500">
+            <div class="flex justify-between mb-1">
+              <span class="text-sm font-bold text-white">vs Akash / Render</span>
+              <span class="text-xs mono text-cyan-400">100× faster</span>
+            </div>
+            <p class="text-xs text-gray-400">They run on Cosmos/ETH. We run bare-metal C++ on Qubic.</p>
+          </div>
+          <div class="p-4 rounded-2xl bg-black/30 border-l-2 border-purple-500">
+            <div class="flex justify-between mb-1">
+              <span class="text-sm font-bold text-white">vs OpenAI / Anthropic</span>
+              <span class="text-xs mono text-purple-400">92% cheaper</span>
+            </div>
+            <p class="text-xs text-gray-400">No middleman margin. Direct Computor-to-user market.</p>
+          </div>
+          <div class="p-4 rounded-2xl bg-black/30 border-l-2 border-pink-500">
+            <div class="flex justify-between mb-1">
+              <span class="text-sm font-bold text-white">vs Gensyn / Bittensor</span>
+              <span class="text-xs mono text-pink-400">real product</span>
+            </div>
+            <p class="text-xs text-gray-400">They have tokens. We have pricing, Oracle verification, and a grants path.</p>
+          </div>
+          <div class="p-4 rounded-2xl bg-black/30 border-l-2 border-teal-500">
+            <div class="flex justify-between mb-1">
+              <span class="text-sm font-bold text-white">vs Self-hosted</span>
+              <span class="text-xs mono text-teal-400">99% cheaper</span>
+            </div>
+            <p class="text-xs text-gray-400">No $420k GPU cluster. No DevOps. Just API calls.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Revenue projections -->
+    <div class="p-8 md:p-12 rounded-3xl glass-strong border border-cyan-500/20 reveal">
+      <div class="flex flex-col md:flex-row md:items-end md:justify-between gap-4 mb-8">
+        <div>
+          <div class="text-[10px] mono text-cyan-400 tracking-widest uppercase mb-2">Revenue Projection · 3 years</div>
+          <h3 class="display text-3xl font-bold text-white">From $0 to <span class="gradient-text">$180M ARR</span></h3>
+          <p class="text-sm text-gray-400 mt-2">Protocol fee = 3% of GMV. Burned + distributed to QUBIC holders via UPoW.</p>
+        </div>
+        <div class="flex gap-4">
+          <div class="text-center">
+            <div class="text-[10px] mono text-gray-500 uppercase">Users Y3</div>
+            <div class="mono text-xl font-black text-cyan-400">48,000</div>
+          </div>
+          <div class="text-center">
+            <div class="text-[10px] mono text-gray-500 uppercase">Jobs Y3</div>
+            <div class="mono text-xl font-black text-purple-400">6B</div>
+          </div>
+          <div class="text-center">
+            <div class="text-[10px] mono text-gray-500 uppercase">Burn Y3</div>
+            <div class="mono text-xl font-black text-pink-400">98.5B Q</div>
+          </div>
+        </div>
+      </div>
+      <div class="h-64">
+        <canvas id="revenueChart"></canvas>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  /* Slider style */
+  .slider-style::-webkit-slider-thumb {
+    appearance: none;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #00d4ff, #a855f7);
+    cursor: pointer;
+    border: 3px solid #050814;
+    box-shadow: 0 0 20px rgba(0, 212, 255, 0.6);
+    transition: transform 0.2s;
+  }
+  .slider-style::-webkit-slider-thumb:hover { transform: scale(1.2); }
+  .slider-style::-moz-range-thumb {
+    width: 24px; height: 24px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #00d4ff, #a855f7);
+    cursor: pointer;
+    border: 3px solid #050814;
+    box-shadow: 0 0 20px rgba(0, 212, 255, 0.6);
+  }
+  .slider-style::-webkit-slider-runnable-track {
+    background: linear-gradient(90deg, #00d4ff, #a855f7 var(--val, 10%), rgba(255,255,255,0.1) var(--val, 10%));
+    height: 8px;
+    border-radius: 999px;
+  }
+</style>
+
+<!-- TOKENOMICS -->
+<section class="relative py-32">
+  <div class="max-w-7xl mx-auto px-6">
+    <div class="text-center mb-16 reveal">
+      <div class="text-[10px] mono text-cyan-400 tracking-[0.3em] mb-4 uppercase">// Flywheel</div>
+      <h2 class="display text-4xl md:text-6xl font-black text-white mb-4 leading-tight">The <span class="gradient-text">$QUBIC</span><br/>flywheel.</h2>
+    </div>
+
+    <div class="relative p-8 md:p-12 rounded-3xl glass-strong border border-cyan-500/20 overflow-hidden reveal">
+      <div class="absolute inset-0 grid-bg opacity-30"></div>
+
+      <div class="relative grid md:grid-cols-4 gap-6 items-center">
+        <div class="text-center">
+          <div class="w-20 h-20 mx-auto rounded-2xl bg-cyan-500/10 border border-cyan-500/40 flex items-center justify-center mb-4">
+            <i data-lucide="users" class="w-8 h-8 text-cyan-400"></i>
+          </div>
+          <div class="display font-bold text-white mb-1">1 · Users</div>
+          <div class="text-xs text-gray-400">buy QUBIC to post jobs</div>
+        </div>
+        <div class="hidden md:flex items-center justify-center">
+          <i data-lucide="arrow-right" class="w-8 h-8 text-cyan-400/50"></i>
+        </div>
+        <div class="text-center md:col-span-2">
+          <div class="w-20 h-20 mx-auto rounded-2xl bg-purple-500/10 border border-purple-500/40 flex items-center justify-center mb-4">
+            <i data-lucide="cpu" class="w-8 h-8 text-purple-400"></i>
+          </div>
+          <div class="display font-bold text-white mb-1">2 · Computors</div>
+          <div class="text-xs text-gray-400">earn QUBIC executing (UPoW-eligible)</div>
+        </div>
+      </div>
+      <div class="relative grid md:grid-cols-4 gap-6 items-center mt-8">
+        <div class="text-center">
+          <div class="w-20 h-20 mx-auto rounded-2xl bg-pink-500/10 border border-pink-500/40 flex items-center justify-center mb-4 glow-purple">
+            <i data-lucide="flame" class="w-8 h-8 text-pink-400"></i>
+          </div>
+          <div class="display font-bold text-white mb-1">4 · Protocol</div>
+          <div class="text-xs text-gray-400">burns 3% of every job</div>
+        </div>
+        <div class="hidden md:flex items-center justify-center">
+          <i data-lucide="arrow-left" class="w-8 h-8 text-cyan-400/50"></i>
+        </div>
+        <div class="text-center md:col-span-2">
+          <div class="w-20 h-20 mx-auto rounded-2xl bg-teal-500/10 border border-teal-500/40 flex items-center justify-center mb-4">
+            <i data-lucide="shield-check" class="w-8 h-8 text-teal-400"></i>
+          </div>
+          <div class="display font-bold text-white mb-1">3 · Oracle verifies</div>
+          <div class="text-xs text-gray-400">escrow released automatically</div>
+        </div>
+      </div>
+
+      <div class="relative mt-12 pt-8 border-t border-white/10 grid grid-cols-3 gap-6 text-center">
+        <div>
+          <div class="display text-4xl font-black gradient-text mono">97%</div>
+          <div class="text-xs text-gray-400 mt-1">to Computors</div>
+        </div>
+        <div>
+          <div class="display text-4xl font-black gradient-text mono">3%</div>
+          <div class="text-xs text-gray-400 mt-1">burned forever</div>
+        </div>
+        <div>
+          <div class="display text-4xl font-black gradient-text mono">0%</div>
+          <div class="text-xs text-gray-400 mt-1">middlemen</div>
+        </div>
+      </div>
+
+      <!-- Burn chart -->
+      <div class="relative mt-8 pt-8 border-t border-white/10">
+        <div class="flex items-center justify-between mb-4">
+          <div class="text-[10px] mono text-gray-500 tracking-widest uppercase">Projected QUBIC burn · 2026-2028</div>
+          <div class="text-xs mono text-pink-400 font-bold">Cumulative</div>
+        </div>
+        <div class="h-48">
+          <canvas id="burnChart"></canvas>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ROADMAP -->
+<section id="roadmap" class="relative py-32">
+  <div class="max-w-7xl mx-auto px-6">
+    <div class="text-center mb-16 reveal">
+      <div class="text-[10px] mono text-purple-400 tracking-[0.3em] mb-4 uppercase">// Roadmap</div>
+      <h2 class="display text-4xl md:text-6xl font-black text-white mb-4 leading-tight">From concept<br/>to <span class="gradient-text">top 10.</span></h2>
+    </div>
+
+    <div class="relative max-w-4xl mx-auto">
+      <div class="absolute left-8 md:left-1/2 top-0 bottom-0 w-px bg-gradient-to-b from-cyan-500 via-purple-500 to-pink-500/20"></div>
+
+      <div class="space-y-10">
+        <div class="relative grid md:grid-cols-2 gap-8 items-center reveal">
+          <div class="md:text-right md:pr-12 pl-20 md:pl-0">
+            <div class="inline-flex items-center gap-2 mono text-xs text-cyan-400 mb-2">
+              <span class="status-dot status-live"></span>
+              <span>Q2 2026 · NOW</span>
+            </div>
+            <h3 class="display text-2xl font-bold text-white mb-2">Whitepaper + Grant</h3>
+            <p class="text-sm text-gray-400">Submit to Qubic Grants (200B QUBIC fund). Target: $160k / 6-month incubation.</p>
+          </div>
+          <div class="absolute left-8 md:left-1/2 -translate-x-1/2 w-5 h-5 rounded-full logo-q glow-cyan ring-4 ring-[#050814]"></div>
+          <div class="hidden md:block"></div>
+        </div>
+
+        <div class="relative grid md:grid-cols-2 gap-8 items-center reveal">
+          <div class="hidden md:block"></div>
+          <div class="absolute left-8 md:left-1/2 -translate-x-1/2 w-5 h-5 rounded-full bg-purple-400 ring-4 ring-[#050814]"></div>
+          <div class="md:pl-12 pl-20">
+            <div class="mono text-xs text-purple-400 mb-2">Q3 2026</div>
+            <h3 class="display text-2xl font-bold text-white mb-2">Testnet alpha · 50 users</h3>
+            <p class="text-sm text-gray-400">LLM inference only. Llama 3.3 70B, Mistral. Oracle-verified hashes. Closed Discord beta.</p>
+          </div>
+        </div>
+
+        <div class="relative grid md:grid-cols-2 gap-8 items-center reveal">
+          <div class="md:text-right md:pr-12 pl-20 md:pl-0">
+            <div class="mono text-xs text-teal-400 mb-2">Q4 2026</div>
+            <h3 class="display text-2xl font-bold text-white mb-2">Mainnet IPO + Public launch</h3>
+            <p class="text-sm text-gray-400">Smart contract IPO vote with Computors. Public marketplace. First 1M jobs target.</p>
+          </div>
+          <div class="absolute left-8 md:left-1/2 -translate-x-1/2 w-5 h-5 rounded-full bg-teal-400 ring-4 ring-[#050814]"></div>
+          <div class="hidden md:block"></div>
+        </div>
+
+        <div class="relative grid md:grid-cols-2 gap-8 items-center reveal">
+          <div class="hidden md:block"></div>
+          <div class="absolute left-8 md:left-1/2 -translate-x-1/2 w-5 h-5 rounded-full bg-pink-400 ring-4 ring-[#050814]"></div>
+          <div class="md:pl-12 pl-20">
+            <div class="mono text-xs text-pink-400 mb-2">2027</div>
+            <h3 class="display text-2xl font-bold text-white mb-2">Training + Enterprise tier</h3>
+            <p class="text-sm text-gray-400">Fine-tuning jobs, distributed training, private sandbox for enterprises. $10M+ TVL target.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="relative py-32">
+  <div class="max-w-5xl mx-auto px-6 reveal">
+    <div class="relative p-12 md:p-20 rounded-[40px] overflow-hidden">
+      <div class="absolute inset-0 bg-gradient-to-br from-cyan-500/15 via-purple-500/10 to-pink-500/15"></div>
+      <div class="absolute inset-0 grid-bg opacity-40"></div>
+      <div class="absolute -top-20 -left-20 w-80 h-80 bg-cyan-500/30 rounded-full blur-[100px]"></div>
+      <div class="absolute -bottom-20 -right-20 w-80 h-80 bg-purple-500/30 rounded-full blur-[100px]"></div>
+      <div class="absolute inset-[1px] rounded-[39px] border border-cyan-500/20"></div>
+
+      <div class="relative text-center">
+        <h2 class="display text-4xl md:text-6xl font-black text-white mb-6 leading-tight">
+          Qubic has the <span class="gradient-text">infrastructure</span>.<br/>
+          We ship the <span class="gradient-text">application.</span>
+        </h2>
+        <p class="text-xl text-gray-400 max-w-2xl mx-auto mb-10">
+          Join the community. Vote the IPO. Earn QUBIC by running inference.<br/>Make top 10 happen.
+        </p>
+        <div class="flex flex-wrap gap-4 justify-center">
+          <button onclick="openJobModal()" class="btn-primary px-8 py-4 rounded-2xl flex items-center gap-2">
+            <i data-lucide="rocket" class="w-5 h-5"></i>
+            Join the waitlist
+          </button>
+          <button class="btn-ghost px-8 py-4 rounded-2xl flex items-center gap-2">
+            <i data-lucide="message-circle" class="w-5 h-5"></i>
+            Discord
+          </button>
+          <button class="btn-ghost px-8 py-4 rounded-2xl flex items-center gap-2">
+            <i data-lucide="github" class="w-5 h-5"></i>
+            GitHub
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer class="relative border-t border-white/5 py-12 mt-16">
+  <div class="max-w-7xl mx-auto px-6 flex flex-col md:flex-row items-center justify-between gap-4 text-center md:text-left">
+    <div class="flex items-center gap-3">
+      <svg class="w-9 h-9"><use href="#qubic-logo"/></svg>
+      <div>
+        <div class="text-sm font-bold text-white">QubicAI Compute</div>
+        <div class="text-[10px] mono text-gray-500">Community concept · not affiliated</div>
+      </div>
+    </div>
+    <div class="text-xs mono text-gray-600">
+      Built with ♥ for the Qubic community · 2026
+    </div>
+  </div>
+</footer>
+
+<!-- ================================ -->
+<!-- POST JOB MODAL -->
+<!-- ================================ -->
+<div class="modal-overlay" id="jobModal">
+  <div class="modal-content glass-strong w-full max-w-lg rounded-3xl border border-cyan-500/30 p-8 mx-4 relative max-h-[90vh] overflow-y-auto">
+    <button onclick="closeJobModal()" class="absolute top-4 right-4 w-8 h-8 rounded-full bg-white/5 hover:bg-white/10 flex items-center justify-center text-gray-400 hover:text-white transition">
+      <i data-lucide="x" class="w-4 h-4"></i>
+    </button>
+
+    <!-- Progress -->
+    <div class="flex items-center gap-2 mb-6">
+      <div class="h-1 flex-1 rounded-full bg-white/5 overflow-hidden">
+        <div id="progressBar" class="h-full logo-q transition-all duration-500" style="width: 33%"></div>
+      </div>
+      <span class="mono text-xs text-cyan-400 font-bold"><span id="stepLabel">1</span>/3</span>
+    </div>
+
+    <!-- STEP 1 -->
+    <div class="step" data-step="1">
+      <div class="text-[10px] mono text-cyan-400 tracking-widest mb-2">STEP 01 · MODEL</div>
+      <h3 class="display text-2xl font-bold text-white mb-6">Choose your workload</h3>
+
+      <div class="space-y-3 mb-6">
+        <label class="block cursor-pointer">
+          <input type="radio" name="modelType" value="llm" class="peer sr-only" checked>
+          <div class="p-4 rounded-2xl border border-white/10 peer-checked:border-cyan-400 peer-checked:bg-cyan-500/10 transition">
+            <div class="flex items-center gap-3">
+              <div class="w-10 h-10 rounded-xl bg-cyan-500/20 flex items-center justify-center">
+                <i data-lucide="message-square" class="w-5 h-5 text-cyan-400"></i>
+              </div>
+              <div class="flex-1">
+                <div class="font-bold text-white">LLM Inference</div>
+                <div class="text-xs text-gray-400">Llama 3.3 · Mistral · Qwen · custom</div>
+              </div>
+              <div class="text-xs mono text-cyan-400">~$0.002/1k</div>
+            </div>
+          </div>
+        </label>
+        <label class="block cursor-pointer">
+          <input type="radio" name="modelType" value="train" class="peer sr-only">
+          <div class="p-4 rounded-2xl border border-white/10 peer-checked:border-purple-400 peer-checked:bg-purple-500/10 transition">
+            <div class="flex items-center gap-3">
+              <div class="w-10 h-10 rounded-xl bg-purple-500/20 flex items-center justify-center">
+                <i data-lucide="dumbbell" class="w-5 h-5 text-purple-400"></i>
+              </div>
+              <div class="flex-1">
+                <div class="font-bold text-white">Training / Fine-tune</div>
+                <div class="text-xs text-gray-400">LoRA · full fine-tune · SFT</div>
+              </div>
+              <div class="text-xs mono text-purple-400">~$0.80/hr GPU</div>
+            </div>
+          </div>
+        </label>
+        <label class="block cursor-pointer">
+          <input type="radio" name="modelType" value="embed" class="peer sr-only">
+          <div class="p-4 rounded-2xl border border-white/10 peer-checked:border-pink-400 peer-checked:bg-pink-500/10 transition">
+            <div class="flex items-center gap-3">
+              <div class="w-10 h-10 rounded-xl bg-pink-500/20 flex items-center justify-center">
+                <i data-lucide="network" class="w-5 h-5 text-pink-400"></i>
+              </div>
+              <div class="flex-1">
+                <div class="font-bold text-white">Embeddings</div>
+                <div class="text-xs text-gray-400">BGE · E5 · batch processing</div>
+              </div>
+              <div class="text-xs mono text-pink-400">~$0.0001/1k</div>
+            </div>
+          </div>
+        </label>
+      </div>
+
+      <button onclick="nextStep()" class="btn-primary w-full py-4 rounded-2xl flex items-center justify-center gap-2">
+        Continue <i data-lucide="arrow-right" class="w-4 h-4"></i>
+      </button>
+    </div>
+
+    <!-- STEP 2 -->
+    <div class="step hidden" data-step="2">
+      <div class="text-[10px] mono text-cyan-400 tracking-widest mb-2">STEP 02 · PROMPT</div>
+      <h3 class="display text-2xl font-bold text-white mb-6">Configure your job</h3>
+
+      <div class="space-y-4 mb-6">
+        <div>
+          <label class="text-xs text-gray-400 mb-2 block">Model</label>
+          <select class="input-style w-full px-4 py-3 rounded-xl text-white">
+            <option>Llama 3.3 70B · $0.0023/1k</option>
+            <option>Mistral Large 2 · $0.0031/1k</option>
+            <option>Qwen 2.5 72B · $0.0019/1k</option>
+            <option>Custom model (upload)</option>
+          </select>
+        </div>
+        <div>
+          <label class="text-xs text-gray-400 mb-2 block">Your prompt</label>
+          <textarea class="input-style w-full px-4 py-3 rounded-xl text-white h-28 resize-none" placeholder="Explain Qubic's UPoW consensus in 200 words..."></textarea>
+        </div>
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="text-xs text-gray-400 mb-2 block">Max budget (QUBIC)</label>
+            <input type="number" value="10" class="input-style w-full px-4 py-3 rounded-xl text-white mono" />
+          </div>
+          <div>
+            <label class="text-xs text-gray-400 mb-2 block">Deadline (ticks)</label>
+            <input type="number" value="4" class="input-style w-full px-4 py-3 rounded-xl text-white mono" />
+          </div>
+        </div>
+      </div>
+
+      <div class="flex gap-3">
+        <button onclick="prevStep()" class="btn-ghost px-6 py-4 rounded-2xl flex items-center gap-2">
+          <i data-lucide="arrow-left" class="w-4 h-4"></i> Back
+        </button>
+        <button onclick="nextStep()" class="btn-primary flex-1 py-4 rounded-2xl flex items-center justify-center gap-2">
+          Post job <i data-lucide="rocket" class="w-4 h-4"></i>
+        </button>
+      </div>
+    </div>
+
+    <!-- STEP 3 -->
+    <div class="step hidden" data-step="3">
+      <div class="text-center py-8">
+        <div class="w-20 h-20 mx-auto rounded-full logo-q flex items-center justify-center mb-4 glow-cyan">
+          <div class="absolute w-20 h-20 rounded-full border border-cyan-400/50 pulse-ring"></div>
+          <i data-lucide="check" class="w-10 h-10 text-[#050814]"></i>
+        </div>
+        <div class="text-[10px] mono text-cyan-400 tracking-widest mb-2">STEP 03 · LIVE</div>
+        <h3 class="display text-2xl font-bold text-white mb-2">Job posted on-chain ✨</h3>
+        <p class="text-gray-400 text-sm mb-6">Your job is live. Computors are bidding now.</p>
+
+        <div class="text-left space-y-3 bg-black/30 rounded-2xl p-5 mb-6 border border-cyan-500/20">
+          <div class="flex justify-between items-center">
+            <span class="text-xs text-gray-500">Tx hash</span>
+            <span class="mono text-xs text-cyan-400">0x7f3a...b219</span>
+          </div>
+          <div class="flex justify-between items-center">
+            <span class="text-xs text-gray-500">Status</span>
+            <span class="flex items-center gap-2 text-xs">
+              <span class="status-dot status-bidding"></span>
+              <span class="text-yellow-400 font-bold">BIDDING · 23 Computors</span>
+            </span>
+          </div>
+          <div class="flex justify-between items-center">
+            <span class="text-xs text-gray-500">ETA</span>
+            <span class="mono text-xs text-green-400">~1.8s</span>
+          </div>
+          <div class="flex justify-between items-center">
+            <span class="text-xs text-gray-500">Lowest bid</span>
+            <span class="mono text-xs text-cyan-400">0.0021 QUBIC</span>
+          </div>
+        </div>
+
+        <button onclick="closeJobModal()" class="btn-ghost w-full py-4 rounded-2xl">
+          View in dashboard
+        </button>
+        <div class="text-[10px] text-gray-600 mt-4 mono">This is a concept demo · no real transaction</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- WALLET CONNECT MODAL -->
+<div class="modal-overlay" id="walletModal">
+  <div class="modal-content glass-strong w-full max-w-md rounded-3xl border border-cyan-500/30 p-8 mx-4 relative">
+    <button onclick="closeWallet()" class="absolute top-4 right-4 w-8 h-8 rounded-full bg-white/5 hover:bg-white/10 flex items-center justify-center text-gray-400 hover:text-white transition">
+      <i data-lucide="x" class="w-4 h-4"></i>
+    </button>
+
+    <div class="text-center mb-6">
+      <div class="w-16 h-16 mx-auto rounded-2xl logo-q flex items-center justify-center mb-4 glow-cyan">
+        <i data-lucide="wallet" class="w-8 h-8 text-[#050814]"></i>
+      </div>
+      <h3 class="display text-2xl font-bold text-white mb-1">Connect Wallet</h3>
+      <p class="text-sm text-gray-400">Choose your Qubic wallet</p>
+    </div>
+
+    <div class="space-y-3">
+      <button class="w-full p-4 rounded-2xl border border-white/10 hover:border-cyan-400 hover:bg-cyan-500/10 transition flex items-center gap-4 group">
+        <div class="w-10 h-10 rounded-xl bg-cyan-500/20 flex items-center justify-center">
+          <i data-lucide="shield" class="w-5 h-5 text-cyan-400"></i>
+        </div>
+        <div class="flex-1 text-left">
+          <div class="font-bold text-white">Qubic Wallet</div>
+          <div class="text-xs text-gray-400">Official · recommended</div>
+        </div>
+        <i data-lucide="arrow-right" class="w-4 h-4 text-gray-500 group-hover:text-cyan-400 group-hover:translate-x-1 transition"></i>
+      </button>
+      <button class="w-full p-4 rounded-2xl border border-white/10 hover:border-purple-400 hover:bg-purple-500/10 transition flex items-center gap-4 group">
+        <div class="w-10 h-10 rounded-xl bg-purple-500/20 flex items-center justify-center">
+          <i data-lucide="key" class="w-5 h-5 text-purple-400"></i>
+        </div>
+        <div class="flex-1 text-left">
+          <div class="font-bold text-white">HASHWallet</div>
+          <div class="text-xs text-gray-400">Hardware security</div>
+        </div>
+        <i data-lucide="arrow-right" class="w-4 h-4 text-gray-500 group-hover:text-purple-400 group-hover:translate-x-1 transition"></i>
+      </button>
+      <button class="w-full p-4 rounded-2xl border border-white/10 hover:border-teal-400 hover:bg-teal-500/10 transition flex items-center gap-4 group">
+        <div class="w-10 h-10 rounded-xl bg-teal-500/20 flex items-center justify-center">
+          <i data-lucide="smartphone" class="w-5 h-5 text-teal-400"></i>
+        </div>
+        <div class="flex-1 text-left">
+          <div class="font-bold text-white">WalletConnect</div>
+          <div class="text-xs text-gray-400">Mobile · QR code</div>
+        </div>
+        <i data-lucide="arrow-right" class="w-4 h-4 text-gray-500 group-hover:text-teal-400 group-hover:translate-x-1 transition"></i>
+      </button>
+    </div>
+
+    <div class="mt-6 text-center text-[10px] text-gray-600 mono">
+      By connecting you accept our Terms of Service
+    </div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div id="toast" class="fixed bottom-6 right-6 z-[200] pointer-events-none"></div>
+
+<script>
+  lucide.createIcons();
+
+  /* ==== Custom cursor ==== */
+  const dot = document.getElementById('cursorDot');
+  const ring = document.getElementById('cursorRing');
+  let mx = 0, my = 0, rx = 0, ry = 0;
+  document.addEventListener('mousemove', (e) => {
+    mx = e.clientX; my = e.clientY;
+    dot.style.transform = `translate(${mx - 4}px, ${my - 4}px)`;
+  });
+  function animCursor() {
+    rx += (mx - rx) * 0.18;
+    ry += (my - ry) * 0.18;
+    ring.style.transform = `translate(${rx - 20}px, ${ry - 20}px)`;
+    requestAnimationFrame(animCursor);
+  }
+  animCursor();
+  document.querySelectorAll('a, button, input, textarea, select, label').forEach(el => {
+    el.addEventListener('mouseenter', () => ring.classList.add('hover'));
+    el.addEventListener('mouseleave', () => ring.classList.remove('hover'));
+  });
+
+  /* ==== Reveal on scroll (GSAP + IntersectionObserver fallback) ==== */
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach((e, i) => {
+      if (e.isIntersecting) {
+        setTimeout(() => e.target.classList.add('visible'), i * 50);
+        io.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.1 });
+  document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+
+  /* ==== Job feed ==== */
+  const jobTemplates = [
+    { type: 'LLM', color: 'cyan', model: 'Llama-3.3-70B', task: 'Inference · 2.4k tokens', user: 'agent_0x4a2f' },
+    { type: 'LLM', color: 'cyan', model: 'Mistral-Large-2', task: 'Inference · 890 tokens', user: 'wallet_bf19' },
+    { type: 'TRAIN', color: 'purple', model: 'Llama-3-8B LoRA', task: 'Fine-tune · 12 epochs', user: 'lab_eth_zurich' },
+    { type: 'EMBED', color: 'pink', model: 'bge-m3', task: 'Embeddings · 18k docs', user: 'rag_cluster_7' },
+    { type: 'LLM', color: 'cyan', model: 'Qwen-2.5-72B', task: 'Inference · 5.1k tokens', user: 'trader_bot_01' },
+    { type: 'TRAIN', color: 'purple', model: 'Flux.1-dev LoRA', task: 'Image model · 3k steps', user: 'artist_ju7x' },
+    { type: 'LLM', color: 'cyan', model: 'DeepSeek-R1', task: 'Reasoning · 8.2k tokens', user: 'quant_desk_hk' },
+    { type: 'EMBED', color: 'pink', model: 'e5-mistral-7b', task: 'Embeddings · 42k docs', user: 'search_v2' },
+    { type: 'LLM', color: 'cyan', model: 'Qwen-QwQ-32B', task: 'Reasoning · 3.7k tokens', user: 'agent_0x91d' },
+    { type: 'TRAIN', color: 'purple', model: 'Whisper-large-v3 FT', task: 'Speech · 500h audio', user: 'acoustic_lab' },
+  ];
+  const statuses = [
+    { label: 'BIDDING', cls: 'bidding', sub: (n) => `Auction open · ${n} bids` },
+    { label: 'EXECUTING', cls: 'executing', sub: () => `Computor CQ${Math.floor(Math.random()*8)+1}-${Math.floor(Math.random()*9000)+1000}` },
+    { label: 'VERIFIED', cls: 'live', sub: () => 'Oracle hash matched ✓' },
+  ];
+
+  const feed = document.getElementById('jobFeed');
+  const maxJobs = 10;
+
+  function createJob() {
+    const t = jobTemplates[Math.floor(Math.random() * jobTemplates.length)];
+    const s = statuses[Math.floor(Math.random() * statuses.length)];
+    const price = (Math.random() * 0.015 + 0.0008).toFixed(4);
+    const ticks = Math.floor(Math.random() * 4) + 1;
+    const bidCount = Math.floor(Math.random() * 400) + 50;
+
+    const el = document.createElement('div');
+    el.className = 'slide-up p-3 rounded-xl bg-black/30 border border-white/5 hover:border-cyan-500/30 hover:bg-cyan-500/5 transition cursor-pointer';
+    el.innerHTML = `
+      <div class="flex items-center justify-between mb-1.5">
+        <div class="flex items-center gap-2 flex-wrap">
+          <span class="status-dot status-${s.cls}"></span>
+          <span class="text-[10px] mono text-${t.color}-400 font-black px-2 py-0.5 rounded bg-${t.color}-500/10 border border-${t.color}-500/30">${t.type}</span>
+          <span class="text-white font-semibold text-sm">${t.model}</span>
+        </div>
+        <div class="text-[10px] mono text-gray-500 font-semibold">${s.label}</div>
+      </div>
+      <div class="flex items-center justify-between text-xs text-gray-400">
+        <span>${t.task} · <span class="mono text-gray-500">${t.user}</span></span>
+        <span class="mono"><span class="text-cyan-400 font-bold">${price} Q</span> / ${ticks}t</span>
+      </div>
+      <div class="text-[10px] mono text-gray-600 mt-1">${s.sub(bidCount)}</div>
+    `;
+    return el;
+  }
+
+  function seedFeed() {
+    for (let i = 0; i < maxJobs; i++) feed.appendChild(createJob());
+  }
+  seedFeed();
+  setInterval(() => {
+    feed.insertBefore(createJob(), feed.firstChild);
+    while (feed.children.length > maxJobs) feed.removeChild(feed.lastChild);
+  }, 2000);
+
+  /* ==== Live counters ==== */
+  let tick = 18429102, jobs24h = 142847, burn = 8.42, gpu = 73, computors = 412;
+  let ctLLM = 847, ctTrain = 142, ctEmbed = 2013;
+
+  setInterval(() => {
+    tick++;
+    jobs24h += Math.floor(Math.random() * 6) + 1;
+    burn += Math.random() * 0.003;
+    gpu = Math.max(58, Math.min(94, gpu + (Math.random() - 0.5) * 3));
+    computors = Math.max(380, Math.min(540, Math.round(computors + (Math.random() - 0.5) * 8)));
+    ctLLM += Math.floor(Math.random() * 3);
+    ctTrain += Math.random() > 0.6 ? 1 : 0;
+    ctEmbed += Math.floor(Math.random() * 5);
+
+    document.getElementById('tickCounter').textContent = tick.toLocaleString();
+    document.getElementById('navTick').textContent = tick.toLocaleString();
+    document.getElementById('stat24h').textContent = jobs24h.toLocaleString();
+    document.getElementById('statBurn').textContent = burn.toFixed(2) + 'M';
+    document.getElementById('statGPU').textContent = Math.round(gpu) + '%';
+    document.getElementById('barGPU').style.width = Math.round(gpu) + '%';
+    document.getElementById('statComputors').textContent = computors + ' / 676';
+    document.getElementById('barComputors').style.width = Math.round(computors/676*100) + '%';
+    document.getElementById('ctLLM').textContent = ctLLM;
+    document.getElementById('ctTrain').textContent = ctTrain;
+    document.getElementById('ctEmbed').textContent = ctEmbed.toLocaleString();
+  }, 2000);
+
+  /* ==== TPS Chart ==== */
+  const tpsData = Array.from({length: 30}, () => Math.floor(Math.random() * 30) + 30);
+  const tpsCtx = document.getElementById('tpsChart').getContext('2d');
+  const tpsGrad = tpsCtx.createLinearGradient(0, 0, 0, 100);
+  tpsGrad.addColorStop(0, 'rgba(0, 212, 255, 0.5)');
+  tpsGrad.addColorStop(1, 'rgba(0, 212, 255, 0)');
+
+  const tpsChart = new Chart(tpsCtx, {
+    type: 'line',
+    data: {
+      labels: tpsData.map((_,i) => i),
+      datasets: [{
+        data: tpsData,
+        borderColor: '#00d4ff',
+        backgroundColor: tpsGrad,
+        fill: true,
+        tension: 0.4,
+        pointRadius: 0,
+        borderWidth: 2,
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: { legend: { display: false }, tooltip: { enabled: false } },
+      scales: { x: { display: false }, y: { display: false, min: 0, max: 80 } },
+      animation: { duration: 400 }
+    }
+  });
+
+  setInterval(() => {
+    const v = Math.floor(Math.random() * 30) + 30;
+    tpsData.push(v);
+    tpsData.shift();
+    tpsChart.data.datasets[0].data = [...tpsData];
+    tpsChart.update('none');
+    document.getElementById('tpsLabel').textContent = v + ' j/t';
+  }, 2000);
+
+  /* ==== Burn Chart ==== */
+  const burnCtx = document.getElementById('burnChart').getContext('2d');
+  const burnGrad = burnCtx.createLinearGradient(0, 0, 0, 200);
+  burnGrad.addColorStop(0, 'rgba(236, 72, 153, 0.4)');
+  burnGrad.addColorStop(1, 'rgba(236, 72, 153, 0)');
+  new Chart(burnCtx, {
+    type: 'line',
+    data: {
+      labels: ['Q2 26','Q3 26','Q4 26','Q1 27','Q2 27','Q3 27','Q4 27','Q1 28','Q2 28'],
+      datasets: [{
+        label: 'QUBIC burned (cumulative, B)',
+        data: [0, 0.2, 1.4, 4.8, 11.2, 22.6, 39.8, 64.2, 98.5],
+        borderColor: '#ec4899',
+        backgroundColor: burnGrad,
+        fill: true,
+        tension: 0.4,
+        pointBackgroundColor: '#ec4899',
+        pointBorderColor: '#fff',
+        pointBorderWidth: 2,
+        pointRadius: 4,
+        pointHoverRadius: 6,
+        borderWidth: 2,
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: { display: false },
+        tooltip: {
+          backgroundColor: 'rgba(5, 8, 20, 0.9)',
+          borderColor: 'rgba(0, 212, 255, 0.3)',
+          borderWidth: 1,
+          padding: 12,
+          titleFont: { family: 'JetBrains Mono' },
+          bodyFont: { family: 'JetBrains Mono' },
+          callbacks: { label: (ctx) => ` ${ctx.parsed.y}B QUBIC burned` }
+        }
+      },
+      scales: {
+        x: { ticks: { color: '#6b7280', font: { family: 'JetBrains Mono', size: 10 } }, grid: { display: false } },
+        y: { ticks: { color: '#6b7280', font: { family: 'JetBrains Mono', size: 10 }, callback: (v) => v+'B' }, grid: { color: 'rgba(255,255,255,0.03)' } }
+      }
+    }
+  });
+
+  /* ==== Modal system ==== */
+  let currentStep = 1;
+  function openJobModal() {
+    document.getElementById('jobModal').classList.add('active');
+    currentStep = 1;
+    updateStep();
+  }
+  function closeJobModal() {
+    document.getElementById('jobModal').classList.remove('active');
+    setTimeout(() => { currentStep = 1; updateStep(); }, 300);
+  }
+  function nextStep() {
+    if (currentStep < 3) { currentStep++; updateStep(); }
+    if (currentStep === 3) showToast('Job posted on-chain', 'Computors are bidding now');
+  }
+  function prevStep() {
+    if (currentStep > 1) { currentStep--; updateStep(); }
+  }
+  function updateStep() {
+    document.querySelectorAll('.step').forEach(s => s.classList.add('hidden'));
+    document.querySelector(`[data-step="${currentStep}"]`).classList.remove('hidden');
+    document.getElementById('progressBar').style.width = (currentStep * 33.33) + '%';
+    document.getElementById('stepLabel').textContent = currentStep;
+    lucide.createIcons();
+  }
+
+  function openWallet() { document.getElementById('walletModal').classList.add('active'); }
+  function closeWallet() { document.getElementById('walletModal').classList.remove('active'); }
+
+  document.querySelectorAll('.modal-overlay').forEach(m => {
+    m.addEventListener('click', (e) => {
+      if (e.target === m) m.classList.remove('active');
+    });
+  });
+
+  /* ==== Toast ==== */
+  function showToast(title, desc) {
+    const t = document.createElement('div');
+    t.className = 'glass-strong border border-cyan-500/40 rounded-2xl p-4 mb-3 flex items-center gap-3 min-w-[320px] slide-up';
+    t.innerHTML = `
+      <div class="w-10 h-10 rounded-xl logo-q flex items-center justify-center shrink-0">
+        <i data-lucide="check" class="w-5 h-5 text-[#050814]"></i>
+      </div>
+      <div>
+        <div class="font-bold text-white text-sm">${title}</div>
+        <div class="text-xs text-gray-400">${desc}</div>
+      </div>
+    `;
+    document.getElementById('toast').appendChild(t);
+    lucide.createIcons();
+    setTimeout(() => { t.style.opacity = '0'; t.style.transform = 'translateX(100px)'; t.style.transition = 'all 0.4s'; }, 3000);
+    setTimeout(() => t.remove(), 3500);
+  }
+
+  /* ==== Escape key ==== */
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') {
+      closeJobModal();
+      closeWallet();
+    }
+  });
+
+  /* ==== ROI Calculator ==== */
+  const roiSlider = document.getElementById('roiSlider');
+  const fmt = (n) => {
+    if (n >= 1_000_000) return '$' + (n/1_000_000).toFixed(n < 10_000_000 ? 2 : 1) + 'M';
+    if (n >= 1_000) return '$' + (n/1_000).toFixed(n < 10_000 ? 1 : 0) + 'k';
+    return '$' + Math.round(n);
+  };
+  const fmtCalls = (n) => {
+    if (n >= 1_000_000) return (n/1_000_000).toFixed(n < 10_000_000 ? 1 : 0) + 'M';
+    if (n >= 1_000) return (n/1_000).toFixed(0) + 'k';
+    return n.toString();
+  };
+  function updateRoi() {
+    const v = parseFloat(roiSlider.value);
+    // Log mapping: val 1→500 maps to 100k→50M calls
+    const calls = 100_000 * Math.pow(500, (v - 1) / 499);
+    const tokensPerCall = 1500;
+    const totalTokens = calls * tokensPerCall;
+    const openai = totalTokens * 0.030 / 1000;
+    const qubic = totalTokens * 0.0023 / 1000;
+    const savedYr = (openai - qubic) * 12;
+
+    document.getElementById('roiCallsLabel').textContent = fmtCalls(calls);
+    document.getElementById('roiOpenai').textContent = fmt(openai);
+    document.getElementById('roiQubic').textContent = fmt(qubic);
+    document.getElementById('roiSaved').textContent = fmt(savedYr);
+
+    // Update the track fill visual
+    const pct = ((v - 1) / 499) * 100;
+    roiSlider.style.setProperty('--val', pct + '%');
+  }
+  roiSlider.addEventListener('input', updateRoi);
+  updateRoi();
+
+  /* ==== Revenue Chart ==== */
+  const revenueCtx = document.getElementById('revenueChart').getContext('2d');
+  const gmvGrad = revenueCtx.createLinearGradient(0, 0, 0, 260);
+  gmvGrad.addColorStop(0, 'rgba(0, 212, 255, 0.5)');
+  gmvGrad.addColorStop(1, 'rgba(0, 212, 255, 0)');
+  const arrGrad = revenueCtx.createLinearGradient(0, 0, 0, 260);
+  arrGrad.addColorStop(0, 'rgba(168, 85, 247, 0.5)');
+  arrGrad.addColorStop(1, 'rgba(168, 85, 247, 0)');
+
+  new Chart(revenueCtx, {
+    type: 'line',
+    data: {
+      labels: ['Q2 26','Q3 26','Q4 26','Q1 27','Q2 27','Q3 27','Q4 27','Q1 28','Q2 28','Q3 28','Q4 28'],
+      datasets: [
+        {
+          label: 'GMV ($M, quarterly)',
+          data: [0, 0.4, 2.8, 8, 18, 35, 60, 95, 140, 185, 230],
+          borderColor: '#00d4ff',
+          backgroundColor: gmvGrad,
+          fill: true,
+          tension: 0.4,
+          pointBackgroundColor: '#00d4ff',
+          pointBorderColor: '#050814',
+          pointBorderWidth: 2,
+          pointRadius: 4,
+          pointHoverRadius: 7,
+          borderWidth: 2,
+          yAxisID: 'y',
+        },
+        {
+          label: 'Annualized Run-Rate ($M)',
+          data: [0, 1.6, 11, 32, 72, 140, 240, 380, 560, 740, 920],
+          borderColor: '#a855f7',
+          backgroundColor: arrGrad,
+          fill: true,
+          tension: 0.4,
+          pointBackgroundColor: '#a855f7',
+          pointBorderColor: '#050814',
+          pointBorderWidth: 2,
+          pointRadius: 4,
+          pointHoverRadius: 7,
+          borderWidth: 2,
+          borderDash: [4, 4],
+          yAxisID: 'y',
+        },
+        {
+          label: 'Protocol fees 3% ($M)',
+          data: [0, 0.012, 0.084, 0.24, 0.54, 1.05, 1.8, 2.85, 4.2, 5.55, 6.9],
+          borderColor: '#ec4899',
+          backgroundColor: 'transparent',
+          fill: false,
+          tension: 0.4,
+          pointBackgroundColor: '#ec4899',
+          pointBorderColor: '#050814',
+          pointBorderWidth: 2,
+          pointRadius: 3,
+          pointHoverRadius: 6,
+          borderWidth: 2,
+          yAxisID: 'y1',
+        },
+      ]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      interaction: { mode: 'index', intersect: false },
+      plugins: {
+        legend: {
+          display: true,
+          position: 'top',
+          align: 'end',
+          labels: {
+            color: '#9ca3af',
+            font: { family: 'JetBrains Mono', size: 10 },
+            boxWidth: 12,
+            boxHeight: 2,
+            padding: 12,
+            usePointStyle: true,
+          }
+        },
+        tooltip: {
+          backgroundColor: 'rgba(5, 8, 20, 0.95)',
+          borderColor: 'rgba(0, 212, 255, 0.3)',
+          borderWidth: 1,
+          padding: 14,
+          titleFont: { family: 'JetBrains Mono', weight: 'bold' },
+          bodyFont: { family: 'JetBrains Mono' },
+          titleColor: '#00d4ff',
+          callbacks: {
+            label: (ctx) => ` ${ctx.dataset.label}: $${ctx.parsed.y}M`
+          }
+        }
+      },
+      scales: {
+        x: {
+          ticks: { color: '#6b7280', font: { family: 'JetBrains Mono', size: 10 } },
+          grid: { display: false }
+        },
+        y: {
+          position: 'left',
+          ticks: {
+            color: '#6b7280',
+            font: { family: 'JetBrains Mono', size: 10 },
+            callback: (v) => '$' + v + 'M'
+          },
+          grid: { color: 'rgba(255,255,255,0.03)' }
+        },
+        y1: {
+          position: 'right',
+          ticks: {
+            color: '#ec4899',
+            font: { family: 'JetBrains Mono', size: 10 },
+            callback: (v) => '$' + v.toFixed(1) + 'M'
+          },
+          grid: { display: false }
+        }
+      }
+    }
+  });
+
+  /* ==== Parallax on hero ==== */
+  gsap.registerPlugin(ScrollTrigger);
+  gsap.to('.orbit-container', {
+    y: -80,
+    scrollTrigger: { trigger: 'section:first-of-type', start: 'top top', end: 'bottom top', scrub: 1 }
+  });
+
+  /* ==== Neural network canvas (hero) ==== */
+  (() => {
+    const canvas = document.getElementById('neuralCanvas');
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d', { alpha: true });
+    const wrap = document.getElementById('neuralWrap');
+    const DPR = Math.min(window.devicePixelRatio || 1, 2);
+
+    const BRAND = '#23FFFF';
+    const ACCENT = '#00f0c8';
+    const PURPLE = '#a855f7';
+
+    let W = 0, H = 0, CX = 0, CY = 0, R = 0;
+    const nodes = [];
+    const edges = [];
+    const signals = [];
+    const mouse = { x: -9999, y: -9999, inside: false, lastFire: 0 };
+
+    function resize() {
+      const rect = wrap.getBoundingClientRect();
+      W = rect.width; H = rect.height;
+      canvas.width = Math.max(1, W * DPR);
+      canvas.height = Math.max(1, H * DPR);
+      canvas.style.width = W + 'px';
+      canvas.style.height = H + 'px';
+      ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
+      CX = W / 2; CY = H / 2;
+      R = Math.min(W, H) / 2;
+      layoutNodes();
+    }
+
+    function layoutNodes() {
+      nodes.length = 0;
+      edges.length = 0;
+      // Hub (hidden, represents Qubic core)
+      nodes.push({ x: CX, y: CY, bx: CX, by: CY, r: 0, layer: 0, activity: 1, pulse: 0, color: ACCENT, isHub: true, ang: 0, rr: 0, spin: 0 });
+
+      const layers = [
+        { count: 8,  rr: R * 0.46, r: 2.6, color: BRAND,  spin: 0.00010 },
+        { count: 12, rr: R * 0.70, r: 2.2, color: ACCENT, spin: -0.00008 },
+        { count: 16, rr: R * 0.94, r: 1.8, color: PURPLE, spin: 0.00006 },
+      ];
+      for (let L = 0; L < layers.length; L++) {
+        const layer = layers[L];
+        const offset = L * 0.2;
+        for (let i = 0; i < layer.count; i++) {
+          const ang = offset + (i / layer.count) * Math.PI * 2;
+          const x = CX + Math.cos(ang) * layer.rr;
+          const y = CY + Math.sin(ang) * layer.rr;
+          nodes.push({
+            x, y, bx: x, by: y, ang, rr: layer.rr,
+            r: layer.r, layer: L + 1, activity: 0,
+            pulse: Math.random() * Math.PI * 2,
+            color: layer.color, spin: layer.spin, isHub: false
+          });
+        }
+      }
+
+      // Edges: each node connects to nearest 2 nodes in the previous (inner) layer
+      for (let i = 1; i < nodes.length; i++) {
+        const n = nodes[i];
+        const inner = [];
+        for (let j = 0; j < nodes.length; j++) {
+          if (nodes[j].layer === n.layer - 1) inner.push(j);
+        }
+        inner.sort((a, b) => {
+          const A = nodes[a], B = nodes[b];
+          return (A.x - n.x) ** 2 + (A.y - n.y) ** 2 - ((B.x - n.x) ** 2 + (B.y - n.y) ** 2);
+        });
+        const take = n.layer === 1 ? 1 : 2;
+        for (let k = 0; k < take && k < inner.length; k++) {
+          edges.push({ a: inner[k], b: i, activity: 0 });
+        }
+      }
+      // Ring closure on outer layer for richer structure
+      const L3 = [];
+      for (let i = 0; i < nodes.length; i++) if (nodes[i].layer === 3) L3.push(i);
+      for (let i = 0; i < L3.length; i++) {
+        edges.push({ a: L3[i], b: L3[(i + 1) % L3.length], activity: 0, isRing: true });
+      }
+    }
+
+    function spawnSignal(edgeIdx, dir, boost) {
+      const e = edges[edgeIdx];
+      if (!e) return;
+      const color = dir > 0 ? nodes[e.b].color : nodes[e.a].color;
+      signals.push({
+        edge: edgeIdx, t: dir > 0 ? 0 : 1, dir,
+        speed: 0.014 + Math.random() * 0.012,
+        color, boost: boost || 1
+      });
+    }
+
+    function fireFromNode(nodeIdx, inward = true) {
+      const cand = [];
+      for (let i = 0; i < edges.length; i++) {
+        const e = edges[i];
+        if (e.isRing) continue;
+        const aLayer = nodes[e.a].layer, bLayer = nodes[e.b].layer;
+        if (inward) {
+          if (e.b === nodeIdx && aLayer < bLayer) cand.push({ i, dir: -1 });
+          if (e.a === nodeIdx && bLayer < aLayer) cand.push({ i, dir: 1 });
+        } else {
+          if (e.a === nodeIdx && bLayer > aLayer) cand.push({ i, dir: 1 });
+          if (e.b === nodeIdx && aLayer > bLayer) cand.push({ i, dir: -1 });
+        }
+      }
+      if (!cand.length) return;
+      const pick = cand[(Math.random() * cand.length) | 0];
+      spawnSignal(pick.i, pick.dir, 1);
+    }
+
+    function autonomousFire() {
+      const outer = [];
+      for (let i = 0; i < nodes.length; i++) if (nodes[i].layer === 3) outer.push(i);
+      if (!outer.length) return;
+      fireFromNode(outer[(Math.random() * outer.length) | 0], true);
+    }
+    setInterval(autonomousFire, 180);
+
+    // Burst from hub on click — outward cascade
+    function hubBurst() {
+      for (let i = 0; i < edges.length; i++) {
+        const e = edges[i];
+        if (e.a === 0) spawnSignal(i, 1, 2);
+        else if (e.b === 0) spawnSignal(i, -1, 2);
+      }
+    }
+
+    canvas.addEventListener('mousemove', e => {
+      const rect = canvas.getBoundingClientRect();
+      mouse.x = e.clientX - rect.left;
+      mouse.y = e.clientY - rect.top;
+      mouse.inside = true;
+    });
+    canvas.addEventListener('mouseleave', () => { mouse.inside = false; mouse.x = mouse.y = -9999; });
+    canvas.addEventListener('click', hubBurst);
+    canvas.addEventListener('touchmove', e => {
+      const t = e.touches[0]; if (!t) return;
+      const rect = canvas.getBoundingClientRect();
+      mouse.x = t.clientX - rect.left;
+      mouse.y = t.clientY - rect.top;
+      mouse.inside = true;
+    }, { passive: true });
+    canvas.addEventListener('touchend', () => { mouse.inside = false; mouse.x = mouse.y = -9999; });
+
+    let last = performance.now();
+    let running = true;
+    const io = new IntersectionObserver(entries => {
+      running = entries[0].isIntersecting;
+      if (running) { last = performance.now(); requestAnimationFrame(tick); }
+    }, { threshold: 0 });
+    io.observe(wrap);
+
+    function tick(now) {
+      if (!running) return;
+      const dt = Math.min(now - last, 50);
+      last = now;
+
+      // Update ring nodes
+      for (let i = 1; i < nodes.length; i++) {
+        const n = nodes[i];
+        n.ang += n.spin * dt;
+        n.bx = CX + Math.cos(n.ang) * n.rr;
+        n.by = CY + Math.sin(n.ang) * n.rr;
+        let tx = n.bx, ty = n.by;
+        if (mouse.inside) {
+          const dx = mouse.x - n.bx, dy = mouse.y - n.by;
+          const d2 = dx * dx + dy * dy;
+          const maxD = 130;
+          if (d2 < maxD * maxD) {
+            const d = Math.sqrt(d2);
+            const k = (1 - d / maxD) * 0.38;
+            tx += dx * k; ty += dy * k;
+            n.activity = Math.max(n.activity, 1 - d / maxD);
+          }
+        }
+        n.x += (tx - n.x) * 0.14;
+        n.y += (ty - n.y) * 0.14;
+        n.pulse += 0.035;
+        n.activity *= 0.935;
+      }
+
+      // Cursor-triggered fires (throttled)
+      if (mouse.inside && now - mouse.lastFire > 75) {
+        mouse.lastFire = now;
+        let best = -1, bestD = Infinity;
+        for (let i = 1; i < nodes.length; i++) {
+          const n = nodes[i];
+          const d = (n.x - mouse.x) ** 2 + (n.y - mouse.y) ** 2;
+          if (d < bestD) { bestD = d; best = i; }
+        }
+        if (best >= 0 && bestD < 160 * 160) fireFromNode(best, true);
+      }
+
+      // Advance signals
+      for (let i = signals.length - 1; i >= 0; i--) {
+        const s = signals[i];
+        s.t += s.speed * s.dir * (dt / 16);
+        const e = edges[s.edge];
+        e.activity = Math.max(e.activity, 0.9);
+
+        const done = (s.dir > 0 && s.t >= 1) || (s.dir < 0 && s.t <= 0);
+        if (done) {
+          const landNodeIdx = s.dir > 0 ? e.b : e.a;
+          const landNode = nodes[landNodeIdx];
+          landNode.activity = Math.min(1.2, landNode.activity + 0.9);
+          signals.splice(i, 1);
+
+          // Chain: if landed on a non-hub, continue inward with some probability
+          if (!landNode.isHub && Math.random() < 0.6) {
+            const inward = landNode.layer > 0;
+            const cand = [];
+            for (let j = 0; j < edges.length; j++) {
+              const ee = edges[j];
+              if (ee.isRing) continue;
+              const aL = nodes[ee.a].layer, bL = nodes[ee.b].layer;
+              if (inward) {
+                if (ee.b === landNodeIdx && aL < bL) cand.push({ j, dir: -1 });
+                if (ee.a === landNodeIdx && bL < aL) cand.push({ j, dir: 1 });
+              }
+            }
+            if (cand.length) {
+              const pk = cand[(Math.random() * cand.length) | 0];
+              spawnSignal(pk.j, pk.dir, s.boost * 0.85);
+            }
+          } else if (landNode.isHub) {
+            // Pulse hub + occasional outward echo
+            nodes[0].activity = 1;
+            if (Math.random() < 0.35) {
+              // Echo back out along a different edge
+              const echo = [];
+              for (let j = 0; j < edges.length; j++) {
+                const ee = edges[j];
+                if (ee.a === 0) echo.push({ j, dir: 1 });
+                else if (ee.b === 0) echo.push({ j, dir: -1 });
+              }
+              if (echo.length) {
+                const pk = echo[(Math.random() * echo.length) | 0];
+                spawnSignal(pk.j, pk.dir, s.boost * 0.7);
+              }
+            }
+          }
+        }
+      }
+      for (let i = 0; i < edges.length; i++) edges[i].activity *= 0.93;
+
+      // ===== Draw =====
+      ctx.clearRect(0, 0, W, H);
+
+      // Soft reference rings
+      ctx.save();
+      ctx.strokeStyle = 'rgba(35, 255, 255, 0.055)';
+      ctx.setLineDash([2, 6]);
+      ctx.lineWidth = 1;
+      for (let L = 1; L <= 3; L++) {
+        const rr = R * (0.46 + (L - 1) * 0.24);
+        ctx.beginPath(); ctx.arc(CX, CY, rr, 0, Math.PI * 2); ctx.stroke();
+      }
+      ctx.setLineDash([]);
+      ctx.restore();
+
+      // Edges
+      for (let i = 0; i < edges.length; i++) {
+        const e = edges[i];
+        const a = nodes[e.a], b = nodes[e.b];
+        const act = e.activity;
+        if (e.isRing) {
+          ctx.strokeStyle = `rgba(168, 85, 247, ${0.06 + act * 0.25})`;
+          ctx.lineWidth = 0.7 + act * 0.8;
+        } else {
+          ctx.strokeStyle = `rgba(35, 255, 255, ${0.07 + act * 0.38})`;
+          ctx.lineWidth = 0.6 + act * 1.4;
+        }
+        ctx.beginPath(); ctx.moveTo(a.x, a.y); ctx.lineTo(b.x, b.y); ctx.stroke();
+      }
+
+      // Signals (glowing packets)
+      for (let i = 0; i < signals.length; i++) {
+        const s = signals[i];
+        const e = edges[s.edge];
+        const a = nodes[e.a], b = nodes[e.b];
+        const x = a.x + (b.x - a.x) * s.t;
+        const y = a.y + (b.y - a.y) * s.t;
+        const rr = 2.4 * s.boost;
+        const g = ctx.createRadialGradient(x, y, 0, x, y, rr * 7);
+        g.addColorStop(0, s.color);
+        g.addColorStop(0.35, s.color + 'aa');
+        g.addColorStop(1, 'rgba(35,255,255,0)');
+        ctx.fillStyle = g;
+        ctx.beginPath(); ctx.arc(x, y, rr * 7, 0, Math.PI * 2); ctx.fill();
+        ctx.fillStyle = '#ffffff';
+        ctx.beginPath(); ctx.arc(x, y, rr, 0, Math.PI * 2); ctx.fill();
+      }
+
+      // Nodes (skip hub — hidden behind logo)
+      for (let i = 1; i < nodes.length; i++) {
+        const n = nodes[i];
+        const pulse = 0.5 + 0.5 * Math.sin(n.pulse);
+        const glowR = n.r * (2.6 + n.activity * 4.5 + pulse * 0.8);
+        const g = ctx.createRadialGradient(n.x, n.y, 0, n.x, n.y, glowR);
+        g.addColorStop(0, n.color);
+        g.addColorStop(0.4, n.color + '55');
+        g.addColorStop(1, 'rgba(35,255,255,0)');
+        ctx.fillStyle = g;
+        ctx.beginPath(); ctx.arc(n.x, n.y, glowR, 0, Math.PI * 2); ctx.fill();
+        ctx.fillStyle = n.activity > 0.35 ? '#ffffff' : n.color;
+        ctx.beginPath(); ctx.arc(n.x, n.y, n.r + n.activity * 1.6, 0, Math.PI * 2); ctx.fill();
+      }
+
+      requestAnimationFrame(tick);
+    }
+
+    const ro = new ResizeObserver(resize);
+    ro.observe(wrap);
+    resize();
+    requestAnimationFrame(tick);
+  })();
+</script>
+
+</body>
+</html>
