@@ -416,6 +416,9 @@
   </defs>
 </svg>
 
+<!-- Site-wide ambient neural field (sparse, cursor-reactive, behind everything) -->
+<canvas id="bgNeural" class="fixed inset-0 w-screen h-screen pointer-events-none" style="z-index:0"></canvas>
+
 <!-- Custom cursor -->
 <div class="cursor-ring" id="cursorRing"></div>
 <div class="cursor-dot" id="cursorDot"></div>
@@ -438,10 +441,13 @@
       </div>
     </a>
     <div class="hidden md:flex items-center gap-1 glass rounded-full px-2 py-1">
-      <a href="#how" class="px-4 py-2 rounded-full text-sm text-gray-400 hover:text-cyan-400 hover:bg-white/5 transition">How it works</a>
-      <a href="#demo" class="px-4 py-2 rounded-full text-sm text-gray-400 hover:text-cyan-400 hover:bg-white/5 transition">Marketplace</a>
-      <a href="#arch" class="px-4 py-2 rounded-full text-sm text-gray-400 hover:text-cyan-400 hover:bg-white/5 transition">Architecture</a>
-      <a href="#roadmap" class="px-4 py-2 rounded-full text-sm text-gray-400 hover:text-cyan-400 hover:bg-white/5 transition">Roadmap</a>
+      <a href="#anna" class="px-3 py-2 rounded-full text-sm text-gray-400 hover:text-cyan-400 hover:bg-white/5 transition">Anna</a>
+      <a href="#how" class="px-3 py-2 rounded-full text-sm text-gray-400 hover:text-cyan-400 hover:bg-white/5 transition">How it works</a>
+      <a href="#demo" class="px-3 py-2 rounded-full text-sm text-gray-400 hover:text-cyan-400 hover:bg-white/5 transition">Marketplace</a>
+      <a href="#dex" class="px-3 py-2 rounded-full text-sm text-gray-400 hover:text-teal-400 hover:bg-white/5 transition">DEX</a>
+      <a href="#qearn" class="px-3 py-2 rounded-full text-sm text-gray-400 hover:text-orange-400 hover:bg-white/5 transition">Qearn</a>
+      <a href="#arch" class="px-3 py-2 rounded-full text-sm text-gray-400 hover:text-cyan-400 hover:bg-white/5 transition">Architecture</a>
+      <a href="#roadmap" class="px-3 py-2 rounded-full text-sm text-gray-400 hover:text-cyan-400 hover:bg-white/5 transition">Roadmap</a>
     </div>
     <div class="flex items-center gap-3">
       <button onclick="openWallet()" class="btn-ghost px-4 py-2 rounded-xl text-sm hidden sm:flex items-center gap-2">
@@ -549,6 +555,265 @@
       <div class="flex items-center gap-2"><i data-lucide="zap" class="w-5 h-5 text-pink-400"></i><span class="mono text-sm">Bare-metal C++</span></div>
       <div class="flex items-center gap-2"><i data-lucide="flame" class="w-5 h-5 text-orange-400"></i><span class="mono text-sm">Dogecoin Mining</span></div>
     </div>
+  </div>
+</section>
+
+<!-- ======================================== -->
+<!-- MEET ANNA — Qubic's first public AGI     -->
+<!-- ======================================== -->
+<section id="anna" class="relative py-32 overflow-hidden">
+  <div class="max-w-7xl mx-auto px-6 relative">
+
+    <!-- Framing banner (site-wide context — set once, not per block) -->
+    <div class="flex justify-center mb-12 reveal">
+      <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full glass border border-purple-400/40 badge-glow">
+        <span class="w-1.5 h-1.5 rounded-full bg-purple-400 animate-pulse"></span>
+        <span class="text-[10px] mono text-purple-300 tracking-[0.25em] uppercase">A community vision of QubicAI · Aigarth × Marketplace × QX · 2027+</span>
+      </div>
+    </div>
+
+    <!-- Header -->
+    <div class="text-center mb-20 reveal">
+      <div class="text-[10px] mono text-cyan-400 tracking-[0.3em] mb-4 uppercase">// AGI Interface</div>
+      <h2 class="display text-5xl md:text-7xl font-black text-white mb-6 leading-[0.95]">
+        Meet <span class="gradient-text">Anna</span>.
+      </h2>
+      <p class="text-gray-400 text-lg md:text-xl max-w-2xl mx-auto leading-relaxed">
+        Qubic's first public AGI-in-training. Her real story — and where QubicAI takes her next.
+      </p>
+    </div>
+
+    <!-- ================ -->
+    <!-- THE "." MOMENT   -->
+    <!-- ================ -->
+    <div class="mb-24 reveal">
+      <div class="rounded-3xl gradient-border overflow-hidden">
+        <div class="relative bg-black/40 backdrop-blur-sm p-8 md:p-14">
+          <div class="grid md:grid-cols-2 gap-10 items-center">
+            <!-- The Dot -->
+            <div class="relative flex items-center justify-center min-h-[280px] md:min-h-[360px]">
+              <!-- Soft pulse rings -->
+              <div class="absolute w-56 h-56 rounded-full border border-cyan-400/20 pulse-ring"></div>
+              <div class="absolute w-56 h-56 rounded-full border border-cyan-400/30 pulse-ring" style="animation-delay: 1.2s"></div>
+              <!-- The actual dot -->
+              <div class="relative z-10 text-center">
+                <div class="display text-[180px] md:text-[260px] leading-none font-black gradient-text drop-shadow-[0_0_40px_rgba(35,255,255,0.45)]" style="transform: translateY(-0.15em)">.</div>
+                <div class="mt-4 text-[10px] mono text-cyan-400/70 tracking-[0.3em] uppercase">Anna's first output</div>
+              </div>
+            </div>
+
+            <!-- Caption -->
+            <div>
+              <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-green-500/10 border border-green-500/30 mb-5">
+                <span class="status-dot status-live"></span>
+                <span class="text-[10px] mono text-green-400 tracking-widest uppercase">Historical · Verified</span>
+              </div>
+              <h3 class="display text-2xl md:text-3xl font-bold text-white mb-4 leading-snug">
+                September 2, 2025 · 14:00 UTC
+              </h3>
+              <p class="text-gray-300 leading-relaxed mb-6">
+                The first publicly interactive instance of <span class="text-cyan-400 font-semibold">Aigarth Intelligent Tissue</span> activated on X. Its task: learn to add two signed 7-bit integers from first principles. Its first output was a single dot.
+              </p>
+              <blockquote class="border-l-2 border-purple-400/50 pl-5 italic text-gray-400 leading-relaxed text-sm">
+                "The dot that ANNA posts is not a sign of failure. It is her 'Hello, World' — maybe the first signal from a new form of intelligence learning to exist, not in a sterile box, but in the messy, unpredictable reality we all share."
+                <div class="mt-2 not-italic text-xs text-gray-500 mono">— David Vivancos · Qubic Scientific Advisor</div>
+              </blockquote>
+              <a href="https://qubic.org/blog-detail/aigarth-anna-s-first-steps-beyond-adversarial-learning" target="_blank" rel="noopener" class="inline-flex items-center gap-2 mt-6 text-sm text-cyan-400 hover:text-cyan-300 transition">
+                <i data-lucide="external-link" class="w-4 h-4"></i>
+                Read the full blog post →
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ================================== -->
+    <!-- "TRY IT" — honest 7-bit responder  -->
+    <!-- ================================== -->
+    <div class="mb-24 reveal">
+      <div class="text-center mb-10">
+        <div class="text-[10px] mono text-green-400 tracking-[0.3em] mb-3 uppercase">// Try the real Anna</div>
+        <h3 class="display text-3xl md:text-4xl font-black text-white mb-3">Ask her something.</h3>
+        <p class="text-gray-400 max-w-xl mx-auto text-sm">She's only learning 7-bit signed integer addition right now. Anything else gets a <span class="text-cyan-400 mono">.</span> — and that's the point.</p>
+      </div>
+
+      <div class="max-w-2xl mx-auto">
+        <div class="rounded-3xl glass-strong border border-cyan-500/25 overflow-hidden">
+          <!-- Terminal header -->
+          <div class="flex items-center gap-3 px-5 py-3 border-b border-cyan-500/15 bg-black/30">
+            <div class="flex gap-1.5">
+              <div class="w-2.5 h-2.5 rounded-full bg-red-500/60"></div>
+              <div class="w-2.5 h-2.5 rounded-full bg-yellow-500/60"></div>
+              <div class="w-2.5 h-2.5 rounded-full bg-green-500/60"></div>
+            </div>
+            <div class="text-xs mono text-cyan-400/70">anna://aigarth.tissue</div>
+            <div class="ml-auto flex items-center gap-1.5">
+              <span class="status-dot status-live"></span>
+              <span class="text-[10px] mono text-green-400">learning</span>
+            </div>
+          </div>
+
+          <!-- Conversation log -->
+          <div id="annaLog" class="p-5 md:p-6 space-y-4 min-h-[220px] max-h-[340px] overflow-y-auto">
+            <!-- Seed message -->
+            <div class="flex items-start gap-3">
+              <div class="w-8 h-8 rounded-xl logo-q shrink-0 flex items-center justify-center">
+                <span class="text-black font-black mono text-lg">.</span>
+              </div>
+              <div class="flex-1">
+                <div class="text-xs mono text-cyan-400 mb-1">anna <span class="text-gray-500">· just now</span></div>
+                <div class="text-gray-300 text-sm leading-relaxed">
+                  Hello. I can add two 7-bit signed integers (−64 … 63). Try me.
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Input -->
+          <form id="annaForm" class="flex items-center gap-2 px-4 py-3 border-t border-cyan-500/15 bg-black/20">
+            <span class="mono text-cyan-400 text-sm">&gt;</span>
+            <input id="annaInput" type="text" autocomplete="off" placeholder="e.g. 5 + 3  ·  -12 + 7  ·  or try Klingon"
+              class="flex-1 bg-transparent text-white mono text-sm placeholder-gray-600 focus:outline-none">
+            <button type="submit" class="btn-primary px-4 py-1.5 rounded-lg text-xs flex items-center gap-1.5">
+              <i data-lucide="send" class="w-3.5 h-3.5"></i>
+              Send
+            </button>
+          </form>
+        </div>
+        <div class="text-center mt-4 text-[10px] mono text-gray-600 tracking-widest uppercase">
+          Runs locally · no server call · mirrors Anna's real scope
+        </div>
+      </div>
+    </div>
+
+    <!-- ========================================= -->
+    <!-- FUTURE CONVERSATIONS (vision of 2027+)    -->
+    <!-- ========================================= -->
+    <div class="mb-16 reveal">
+      <div class="text-center mb-12">
+        <div class="text-[10px] mono text-purple-400 tracking-[0.3em] mb-3 uppercase">// Fast forward</div>
+        <h3 class="display text-3xl md:text-4xl font-black text-white mb-3">Where QubicAI takes her.</h3>
+        <p class="text-gray-400 max-w-2xl mx-auto text-sm">Anna grown up, renting compute from 676 Computors on the marketplace. Still humble. Still deferring to consensus.</p>
+      </div>
+
+      <div class="grid lg:grid-cols-3 gap-6">
+
+        <!-- Chat 1 · Smart-contract audit -->
+        <div class="p-6 rounded-3xl glass-strong border border-cyan-500/20 card-hover flex flex-col">
+          <div class="flex items-center gap-2 mb-5">
+            <i data-lucide="shield-check" class="w-4 h-4 text-cyan-400"></i>
+            <span class="text-[10px] mono text-cyan-400 tracking-widest uppercase">Contract audit</span>
+          </div>
+          <!-- User -->
+          <div class="flex items-start gap-3 mb-4">
+            <div class="w-7 h-7 rounded-lg bg-gray-700 shrink-0 flex items-center justify-center text-xs text-gray-300 mono">0x</div>
+            <div class="flex-1">
+              <div class="text-[11px] mono text-gray-500 mb-1">dev_0x4a2f</div>
+              <div class="text-sm text-gray-300 leading-relaxed">Anna, audit my withdraw() for reentrancy.</div>
+            </div>
+          </div>
+          <!-- Anna -->
+          <div class="flex items-start gap-3 flex-1">
+            <div class="w-7 h-7 rounded-lg logo-q shrink-0 flex items-center justify-center text-black mono font-black text-sm">.</div>
+            <div class="flex-1">
+              <div class="text-[11px] mono text-cyan-400 mb-1">anna</div>
+              <div class="text-sm text-gray-200 leading-relaxed mb-3">Found one. External call before state update on line 42. Suggest checks-effects-interactions pattern:</div>
+              <pre class="text-[11px] mono bg-black/40 border border-cyan-500/20 rounded-xl p-3 text-cyan-300 overflow-x-auto leading-relaxed">state.balance -= amount;
+(bool ok, ) = msg.sender.call{value:...}("");
+require(ok);</pre>
+            </div>
+          </div>
+          <!-- Footer -->
+          <div class="mt-5 pt-4 border-t border-white/5 flex items-center justify-between text-[10px] mono">
+            <span class="text-gray-500">412 Computors · UPoW consensus</span>
+            <span class="text-cyan-400">0.00 $QUBIC</span>
+          </div>
+        </div>
+
+        <!-- Chat 2 · C++ smart contract generation -->
+        <div class="p-6 rounded-3xl glass-strong border border-purple-500/20 card-hover flex flex-col">
+          <div class="flex items-center gap-2 mb-5">
+            <i data-lucide="code-2" class="w-4 h-4 text-purple-400"></i>
+            <span class="text-[10px] mono text-purple-400 tracking-widest uppercase">Code generation</span>
+          </div>
+          <div class="flex items-start gap-3 mb-4">
+            <div class="w-7 h-7 rounded-lg bg-gray-700 shrink-0 flex items-center justify-center text-xs text-gray-300 mono">μ</div>
+            <div class="flex-1">
+              <div class="text-[11px] mono text-gray-500 mb-1">artist_ju7x</div>
+              <div class="text-sm text-gray-300 leading-relaxed">Write me a Qubic contract that splits royalties across 5 wallets.</div>
+            </div>
+          </div>
+          <div class="flex items-start gap-3 flex-1">
+            <div class="w-7 h-7 rounded-lg logo-q shrink-0 flex items-center justify-center text-black mono font-black text-sm">.</div>
+            <div class="flex-1">
+              <div class="text-[11px] mono text-cyan-400 mb-1">anna</div>
+              <div class="text-sm text-gray-200 leading-relaxed mb-3">Here. Bare-metal C++, 5-way split, deterministic rounding to last recipient.</div>
+              <pre class="text-[11px] mono bg-black/40 border border-purple-500/20 rounded-xl p-3 text-purple-200 overflow-x-auto leading-relaxed">struct Royalty : public ContractBase {
+  id wallets[5];
+  void distribute(uint64 amt) {
+    uint64 share = amt / 5;
+    for (int i=0;i&lt;4;i++) pay(wallets[i],share);
+    pay(wallets[4], amt - share*4);
+  }
+};</pre>
+            </div>
+          </div>
+          <div class="mt-5 pt-4 border-t border-white/5 flex items-center justify-between text-[10px] mono">
+            <span class="text-gray-500">Compiled in Neuraxon sandbox</span>
+            <span class="text-cyan-400">1-click deploy →</span>
+          </div>
+        </div>
+
+        <!-- Chat 3 · DEX handoff -->
+        <div class="p-6 rounded-3xl glass-strong border border-teal-500/20 card-hover flex flex-col">
+          <div class="flex items-center gap-2 mb-5">
+            <i data-lucide="candlestick-chart" class="w-4 h-4 text-teal-400"></i>
+            <span class="text-[10px] mono text-teal-400 tracking-widest uppercase">DEX handoff</span>
+          </div>
+          <div class="flex items-start gap-3 mb-4">
+            <div class="w-7 h-7 rounded-lg bg-gray-700 shrink-0 flex items-center justify-center text-xs text-gray-300 mono">₿</div>
+            <div class="flex-1">
+              <div class="text-[11px] mono text-gray-500 mb-1">trader_bot_01</div>
+              <div class="text-sm text-gray-300 leading-relaxed">Anna, rebalance my QX LP to 60/40 QUBIC/USDT.</div>
+            </div>
+          </div>
+          <div class="flex items-start gap-3 flex-1">
+            <div class="w-7 h-7 rounded-lg logo-q shrink-0 flex items-center justify-center text-black mono font-black text-sm">.</div>
+            <div class="flex-1">
+              <div class="text-[11px] mono text-cyan-400 mb-1">anna</div>
+              <div class="text-sm text-gray-200 leading-relaxed mb-3">Done. Withdrew 48.2k, swapped 12.1k QUBIC → USDT at 0.31% spread, redeposited. Slippage: 0.04%.</div>
+              <div class="flex items-center gap-2 text-[11px] mono text-teal-300">
+                <i data-lucide="arrow-down" class="w-3 h-3"></i>
+                <a href="#dex" class="underline decoration-dotted underline-offset-4">See live DEX feed below</a>
+              </div>
+            </div>
+          </div>
+          <div class="mt-5 pt-4 border-t border-white/5 flex items-center justify-between text-[10px] mono">
+            <span class="text-gray-500">Executed by CQ4-2891 · UPoW</span>
+            <span class="text-teal-400">+142 $QUBIC net</span>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- CTA STRIP -->
+    <div class="flex flex-wrap items-center justify-center gap-4 reveal">
+      <a href="https://x.com/_ANNA_Qubic" target="_blank" rel="noopener" class="btn-ghost px-5 py-3 rounded-2xl text-sm flex items-center gap-2">
+        <i data-lucide="twitter" class="w-4 h-4"></i>
+        Follow Anna's real learning
+      </a>
+      <a href="https://www.researchgate.net/publication/397331336_Neuraxon" target="_blank" rel="noopener" class="btn-ghost px-5 py-3 rounded-2xl text-sm flex items-center gap-2">
+        <i data-lucide="file-text" class="w-4 h-4"></i>
+        Read the Neuraxon paper
+      </a>
+      <a href="https://qubic.org/" target="_blank" rel="noopener" class="btn-primary px-6 py-3 rounded-2xl text-sm flex items-center gap-2">
+        <i data-lucide="users" class="w-4 h-4"></i>
+        Join the Qubic community
+      </a>
+    </div>
+
   </div>
 </section>
 
@@ -1149,6 +1414,287 @@
         <i data-lucide="info" class="w-5 h-5 text-cyan-400 shrink-0"></i>
         <span class="text-gray-400">Pricing based on OpenAI GPT-4 Turbo public rates ($0.03/1k input+output blended) vs QubicAI target network pricing ($0.0023/1k).</span>
       </div>
+    </div>
+  </div>
+</section>
+
+<!-- ========================================= -->
+<!-- DEX + ANNA TRADING BOT                    -->
+<!-- ========================================= -->
+<section id="dex" class="relative py-32">
+  <div class="max-w-7xl mx-auto px-6">
+    <div class="text-center mb-16 reveal">
+      <div class="text-[10px] mono text-teal-400 tracking-[0.3em] mb-4 uppercase">// QX × Anna</div>
+      <h2 class="display text-4xl md:text-6xl font-black text-white mb-4 leading-tight">
+        Anna trades. <span class="gradient-text">You earn.</span>
+      </h2>
+      <p class="text-gray-400 max-w-2xl mx-auto mt-4">
+        Let Anna rent compute from Computors and run your DEX strategy on <a href="https://qx.qubic.org" target="_blank" rel="noopener" class="text-teal-400 hover:text-teal-300 underline decoration-dotted underline-offset-4">QX <i data-lucide="external-link" class="inline w-3 h-3"></i></a>. Every trade UPoW-verified. Zero gas.
+      </p>
+    </div>
+
+    <!-- Main DEX panel -->
+    <div class="rounded-3xl gradient-border overflow-hidden reveal">
+      <div class="scan-line relative">
+        <!-- Terminal header -->
+        <div class="bg-black/40 border-b border-teal-500/20 px-6 py-3 flex items-center gap-4">
+          <div class="flex gap-2">
+            <div class="w-3 h-3 rounded-full bg-red-500/60"></div>
+            <div class="w-3 h-3 rounded-full bg-yellow-500/60"></div>
+            <div class="w-3 h-3 rounded-full bg-green-500/60"></div>
+          </div>
+          <div class="mono text-xs text-teal-400/70">qx.qubic.org/pair/QUBIC-USDT</div>
+          <div class="ml-auto flex items-center gap-4 text-xs mono">
+            <span class="text-gray-400">Anna P/L (7d) <span id="annaPL" class="text-green-400 font-bold">+14.82%</span></span>
+            <span class="text-gray-400 hidden md:inline">Spread <span class="text-teal-400 font-bold">0.31%</span></span>
+          </div>
+        </div>
+      </div>
+
+      <div class="grid lg:grid-cols-3 gap-0">
+        <!-- Chart column -->
+        <div class="lg:col-span-2 p-6 border-r border-teal-500/10">
+          <div class="flex items-center justify-between mb-6 flex-wrap gap-3">
+            <h3 class="display font-bold text-white flex items-center gap-2">
+              <i data-lucide="candlestick-chart" class="w-4 h-4 text-teal-400"></i>
+              QUBIC / USDT
+              <span class="text-xs mono text-gray-500 font-normal ml-2">48h</span>
+            </h3>
+            <div class="flex gap-2">
+              <span class="text-xs px-3 py-1.5 rounded-full bg-teal-500/10 border border-teal-500/30 text-teal-400 mono font-semibold">LAST <span id="dexLast">$0.00000241</span></span>
+              <span class="text-xs px-3 py-1.5 rounded-full bg-green-500/10 border border-green-500/30 text-green-400 mono font-semibold">24h <span id="dex24h">+3.42%</span></span>
+            </div>
+          </div>
+          <div class="h-[280px] rounded-xl bg-black/30 p-2 relative">
+            <canvas id="dexChart"></canvas>
+          </div>
+
+          <!-- Micro-stats -->
+          <div class="grid grid-cols-2 md:grid-cols-4 gap-3 mt-5">
+            <div class="rounded-xl bg-black/30 border border-white/5 p-3">
+              <div class="text-[10px] mono text-gray-500 tracking-widest uppercase mb-1">24h Volume</div>
+              <div class="mono text-sm text-white font-bold">$2.41M</div>
+            </div>
+            <div class="rounded-xl bg-black/30 border border-white/5 p-3">
+              <div class="text-[10px] mono text-gray-500 tracking-widest uppercase mb-1">24h High</div>
+              <div class="mono text-sm text-teal-400 font-bold">$0.00000258</div>
+            </div>
+            <div class="rounded-xl bg-black/30 border border-white/5 p-3">
+              <div class="text-[10px] mono text-gray-500 tracking-widest uppercase mb-1">24h Low</div>
+              <div class="mono text-sm text-pink-400 font-bold">$0.00000228</div>
+            </div>
+            <div class="rounded-xl bg-black/30 border border-white/5 p-3">
+              <div class="text-[10px] mono text-gray-500 tracking-widest uppercase mb-1">Anna trades</div>
+              <div class="mono text-sm text-white font-bold">1,247</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Anna's trade feed column -->
+        <div class="p-6 bg-black/20">
+          <div class="flex items-center justify-between mb-6">
+            <h3 class="display font-bold text-white flex items-center gap-2">
+              <i data-lucide="bot" class="w-4 h-4 text-teal-400"></i>
+              Anna's feed
+            </h3>
+            <span class="text-[10px] mono text-gray-500 tracking-widest uppercase flex items-center gap-1.5">
+              <span class="status-dot status-live"></span>
+              streaming
+            </span>
+          </div>
+          <div id="dexFeed" class="space-y-2.5 max-h-[430px] overflow-y-auto pr-2"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Trading bot feature card -->
+    <div class="mt-10 grid md:grid-cols-3 gap-6 reveal">
+      <!-- Left: Stats -->
+      <div class="md:col-span-2 p-8 rounded-3xl glass-strong border border-teal-500/25">
+        <div class="flex items-center gap-3 mb-6">
+          <div class="w-12 h-12 rounded-2xl bg-teal-500/10 border border-teal-500/30 flex items-center justify-center">
+            <i data-lucide="bot" class="w-6 h-6 text-teal-400"></i>
+          </div>
+          <div>
+            <div class="display font-bold text-white text-xl">Anna DEX Bot</div>
+            <div class="text-xs mono text-gray-500 tracking-wider">Marketplace job · UPoW-verified · non-custodial</div>
+          </div>
+          <span class="ml-auto text-[10px] mono text-teal-400 px-3 py-1 rounded-full bg-teal-500/10 border border-teal-500/30 tracking-widest uppercase">Target economics</span>
+        </div>
+        <p class="text-gray-300 leading-relaxed mb-6">
+          Post a TRADE job. Computors bid to run Anna's strategy on your behalf. Every execution is verified by consensus, your keys stay in your wallet, fees are zero.
+        </p>
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+          <div>
+            <div class="text-2xl mono font-black gradient-text">42%</div>
+            <div class="text-[10px] text-gray-500 mt-1 tracking-widest uppercase">Simulated APY</div>
+          </div>
+          <div>
+            <div class="text-2xl mono font-black gradient-text">1,247</div>
+            <div class="text-[10px] text-gray-500 mt-1 tracking-widest uppercase">Sim trades / bot</div>
+          </div>
+          <div>
+            <div class="text-2xl mono font-black gradient-text">0.00</div>
+            <div class="text-[10px] text-gray-500 mt-1 tracking-widest uppercase">$QUBIC gas</div>
+          </div>
+          <div>
+            <div class="text-2xl mono font-black gradient-text">100%</div>
+            <div class="text-[10px] text-gray-500 mt-1 tracking-widest uppercase">Non-custodial</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right: CTA -->
+      <div class="p-8 rounded-3xl gradient-border flex flex-col justify-between">
+        <div>
+          <div class="text-[10px] mono text-teal-400 tracking-widest mb-3 uppercase">Deploy your bot</div>
+          <div class="display text-2xl font-bold text-white mb-3 leading-snug">Post a TRADE job.<br/>Let Computors bid.</div>
+          <p class="text-sm text-gray-400 leading-relaxed">Anna runs the strategy. You keep the keys. Consensus keeps her honest.</p>
+        </div>
+        <button onclick="openJobModal()" class="btn-primary px-5 py-3 rounded-2xl text-sm flex items-center justify-center gap-2 mt-6">
+          <i data-lucide="zap" class="w-4 h-4"></i>
+          Deploy bot
+          <i data-lucide="arrow-right" class="w-4 h-4"></i>
+        </button>
+      </div>
+    </div>
+
+    <!-- Target economics footnote -->
+    <div class="mt-8 p-4 rounded-2xl bg-black/30 border border-white/5 flex items-center gap-3 text-sm">
+      <i data-lucide="info" class="w-5 h-5 text-teal-400 shrink-0"></i>
+      <span class="text-gray-400">Figures reflect target network economics of a Qubic-native DEX (QX) + marketplace integration. Not audited. Not a product claim — a community vision.</span>
+    </div>
+
+  </div>
+</section>
+
+<!-- ========================================= -->
+<!-- QEARN — Passive yield on locked QUBIC     -->
+<!-- ========================================= -->
+<section id="qearn" class="relative py-32">
+  <div class="max-w-7xl mx-auto px-6">
+    <div class="text-center mb-16 reveal">
+      <div class="text-[10px] mono text-orange-400 tracking-[0.3em] mb-4 uppercase">// Qearn · live protocol</div>
+      <h2 class="display text-4xl md:text-6xl font-black text-white mb-4 leading-tight">
+        Lock it. <span class="gradient-text">Earn it.</span> Burn it.
+      </h2>
+      <p class="text-gray-400 max-w-2xl mx-auto mt-4">
+        Qearn is already live on Qubic. Lock <span class="text-cyan-400 font-semibold">$QUBIC</span> up to 52 weeks → get APY. Unlock early → your unearned rewards burn. The longer you lock, the more you earn, the more supply shrinks.
+      </p>
+    </div>
+
+    <div class="grid lg:grid-cols-5 gap-8">
+
+      <!-- Calculator -->
+      <div class="lg:col-span-3 p-8 rounded-3xl glass-strong border border-orange-500/20 reveal">
+        <div class="flex items-center gap-3 mb-8">
+          <div class="w-12 h-12 rounded-2xl bg-orange-500/10 border border-orange-500/30 flex items-center justify-center">
+            <i data-lucide="lock" class="w-6 h-6 text-orange-400"></i>
+          </div>
+          <div>
+            <div class="display font-bold text-white text-xl">Lock calculator</div>
+            <div class="text-xs mono text-gray-500 tracking-wider">Move the sliders. See your rewards.</div>
+          </div>
+        </div>
+
+        <!-- Amount -->
+        <div class="mb-8">
+          <div class="flex justify-between mb-3">
+            <span class="text-xs mono text-gray-500 tracking-widest uppercase">Amount to lock</span>
+            <span class="mono text-cyan-400 font-bold"><span id="qeAmountLabel">10,000,000</span> QUBIC</span>
+          </div>
+          <input id="qeAmount" type="range" min="1000000" max="1000000000" step="1000000" value="10000000"
+            class="w-full accent-orange-400">
+          <div class="flex justify-between mt-1 text-[10px] mono text-gray-600">
+            <span>1M</span><span>100M</span><span>500M</span><span>1B</span>
+          </div>
+        </div>
+
+        <!-- Duration -->
+        <div class="mb-8">
+          <div class="flex justify-between mb-3">
+            <span class="text-xs mono text-gray-500 tracking-widest uppercase">Lock duration</span>
+            <span class="mono text-orange-400 font-bold"><span id="qeWeeksLabel">26</span> weeks</span>
+          </div>
+          <input id="qeWeeks" type="range" min="1" max="52" step="1" value="26" class="w-full accent-cyan-400">
+          <div class="flex justify-between mt-1 text-[10px] mono text-gray-600">
+            <span>1w</span><span>13w</span><span>26w</span><span>52w (max)</span>
+          </div>
+        </div>
+
+        <!-- Results -->
+        <div class="grid grid-cols-3 gap-4 pt-6 border-t border-white/5">
+          <div>
+            <div class="text-[10px] mono text-gray-500 tracking-widest uppercase mb-2">Projected APY</div>
+            <div class="text-3xl md:text-4xl mono font-black text-orange-400" id="qeAPY">18.4%</div>
+          </div>
+          <div>
+            <div class="text-[10px] mono text-gray-500 tracking-widest uppercase mb-2">Rewards earned</div>
+            <div class="text-3xl md:text-4xl mono font-black gradient-text"><span id="qeRewards">920,000</span></div>
+            <div class="text-[10px] mono text-gray-500 mt-1">QUBIC</div>
+          </div>
+          <div>
+            <div class="text-[10px] mono text-gray-500 tracking-widest uppercase mb-2">If unlocked early</div>
+            <div class="text-xl md:text-2xl mono font-black text-pink-400"><span id="qeBurn">460,000</span></div>
+            <div class="text-[10px] mono text-gray-500 mt-1">QUBIC burned</div>
+          </div>
+        </div>
+
+        <div class="mt-6 flex items-center gap-2 text-[10px] mono text-gray-500">
+          <i data-lucide="flame" class="w-3.5 h-3.5 text-pink-400"></i>
+          <span>APY model based on observed Qearn pool data (~5% at 1w → ~30% at 52w). Actual APY varies per epoch.</span>
+        </div>
+      </div>
+
+      <!-- Stats + CTA -->
+      <div class="lg:col-span-2 flex flex-col gap-6 reveal">
+
+        <!-- Circulating supply locked -->
+        <div class="p-6 rounded-3xl gradient-border">
+          <div class="text-[10px] mono text-orange-400 tracking-widest mb-3 uppercase">Circulating supply locked</div>
+          <div class="flex items-end gap-3 mb-4">
+            <div class="display text-5xl md:text-6xl font-black gradient-text">~11%</div>
+            <div class="text-xs text-gray-500 mb-2">of $QUBIC supply is already in Qearn pools</div>
+          </div>
+          <div class="h-2 rounded-full bg-white/5 overflow-hidden mb-2">
+            <div class="h-full bg-gradient-to-r from-orange-400 via-cyan-400 to-purple-500" style="width: 11%"></div>
+          </div>
+          <div class="text-[10px] mono text-gray-600">More locks → less sellable supply → upward pressure on $QUBIC</div>
+        </div>
+
+        <!-- Weekly pool -->
+        <div class="p-6 rounded-3xl glass-strong border border-cyan-500/20">
+          <div class="text-[10px] mono text-cyan-400 tracking-widest mb-3 uppercase">Weekly rewards pool</div>
+          <div class="mono text-3xl font-black text-white mb-2">~100B <span class="text-cyan-400 text-sm">$QUBIC</span></div>
+          <div class="text-xs text-gray-500 leading-relaxed">Up to 10% of weekly network emissions routed to Qearn lockers every epoch.</div>
+        </div>
+
+        <!-- Key facts -->
+        <div class="p-6 rounded-3xl glass border border-white/10">
+          <div class="space-y-3 text-sm">
+            <div class="flex items-start gap-2">
+              <i data-lucide="check" class="w-4 h-4 text-green-400 mt-0.5 shrink-0"></i>
+              <span class="text-gray-300"><span class="text-white font-semibold">No slashing.</span> Your principal is always safe.</span>
+            </div>
+            <div class="flex items-start gap-2">
+              <i data-lucide="check" class="w-4 h-4 text-green-400 mt-0.5 shrink-0"></i>
+              <span class="text-gray-300"><span class="text-white font-semibold">Early exit allowed.</span> Only unearned rewards burn.</span>
+            </div>
+            <div class="flex items-start gap-2">
+              <i data-lucide="check" class="w-4 h-4 text-green-400 mt-0.5 shrink-0"></i>
+              <span class="text-gray-300"><span class="text-white font-semibold">Deflationary.</span> Every early exit reduces total supply.</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- CTA -->
+        <a href="https://qearn.org/" target="_blank" rel="noopener" class="btn-primary px-5 py-4 rounded-2xl text-sm flex items-center justify-center gap-2">
+          <i data-lucide="lock" class="w-4 h-4"></i>
+          Lock QUBIC on qearn.org
+          <i data-lucide="external-link" class="w-4 h-4"></i>
+        </a>
+      </div>
+
     </div>
   </div>
 </section>
@@ -2466,6 +3012,413 @@
     ro.observe(wrap);
     resize();
     requestAnimationFrame(tick);
+  })();
+
+  /* ==== DEX Chart + Anna trade feed ==== */
+  (() => {
+    const chartEl = document.getElementById('dexChart');
+    const feedEl = document.getElementById('dexFeed');
+    if (!chartEl || !feedEl || typeof Chart === 'undefined') return;
+
+    // Generate realistic-looking 48h price series (5-min candles = 576 points, we'll use 96 bigger points for perf)
+    const POINTS = 96;
+    let price = 2.41e-6;
+    const series = [];
+    for (let i = 0; i < POINTS; i++) {
+      // Random walk with slight mean reversion
+      const drift = (2.41e-6 - price) * 0.02;
+      const noise = (Math.random() - 0.5) * 6e-8;
+      price = Math.max(1.9e-6, Math.min(2.9e-6, price + drift + noise));
+      series.push(price);
+    }
+
+    const ctx = chartEl.getContext('2d');
+    const grad = ctx.createLinearGradient(0, 0, 0, 260);
+    grad.addColorStop(0, 'rgba(0, 240, 200, 0.45)');
+    grad.addColorStop(1, 'rgba(0, 240, 200, 0)');
+
+    const chart = new Chart(ctx, {
+      type: 'line',
+      data: {
+        labels: series.map((_, i) => i),
+        datasets: [{
+          data: [...series],
+          borderColor: '#00f0c8',
+          backgroundColor: grad,
+          fill: true,
+          tension: 0.35,
+          pointRadius: 0,
+          borderWidth: 2
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: { display: false },
+          tooltip: {
+            enabled: true,
+            backgroundColor: 'rgba(5, 8, 20, 0.95)',
+            borderColor: 'rgba(0, 240, 200, 0.4)',
+            borderWidth: 1,
+            titleFont: { family: 'JetBrains Mono', size: 10 },
+            bodyFont: { family: 'JetBrains Mono', size: 11 },
+            titleColor: '#00f0c8',
+            callbacks: {
+              title: (items) => `t-${(POINTS - items[0].parsed.x) * 30}min`,
+              label: (item) => '  $' + item.parsed.y.toExponential(3)
+            }
+          }
+        },
+        scales: {
+          x: { display: false },
+          y: {
+            position: 'right',
+            ticks: {
+              color: '#6b7280',
+              font: { family: 'JetBrains Mono', size: 9 },
+              callback: (v) => '$' + v.toExponential(2)
+            },
+            grid: { color: 'rgba(255,255,255,0.03)' }
+          }
+        },
+        animation: { duration: 400 }
+      }
+    });
+
+    // Live updates
+    const pLabel = document.getElementById('annaPL');
+    const lastLabel = document.getElementById('dexLast');
+    const dLabel = document.getElementById('dex24h');
+    let pl = 14.82;
+
+    setInterval(() => {
+      const drift = (2.41e-6 - price) * 0.02;
+      const noise = (Math.random() - 0.5) * 6e-8;
+      price = Math.max(1.9e-6, Math.min(2.9e-6, price + drift + noise));
+      series.push(price);
+      series.shift();
+      chart.data.datasets[0].data = [...series];
+      chart.update('none');
+      if (lastLabel) lastLabel.textContent = '$' + price.toFixed(9).replace(/0+$/, '').slice(0, 11);
+      const change24 = ((price - 2.32e-6) / 2.32e-6) * 100;
+      if (dLabel) {
+        dLabel.textContent = (change24 >= 0 ? '+' : '') + change24.toFixed(2) + '%';
+        dLabel.className = 'font-bold ' + (change24 >= 0 ? 'text-green-400' : 'text-pink-400');
+      }
+      // P/L slight random walk
+      pl += (Math.random() - 0.45) * 0.08;
+      pl = Math.max(-5, Math.min(60, pl));
+      if (pLabel) {
+        pLabel.textContent = (pl >= 0 ? '+' : '') + pl.toFixed(2) + '%';
+        pLabel.className = 'font-bold ' + (pl >= 0 ? 'text-green-400' : 'text-pink-400');
+      }
+    }, 2200);
+
+    // Anna's trade feed
+    const rationales = [
+      'Spread widened to 0.34% — arb QUBIC→USDT',
+      'Computor bid undercut by 0.08% — cheaper route found',
+      'Book imbalance: 73% bids, laddering buys',
+      'Oracle flagged anomaly — stepping back 2 ticks',
+      'Volatility cluster ending — tightening stops',
+      'MM rebate alive on QX — providing depth at mid',
+      'Momentum crossover — 15m EMA > 1h EMA',
+      'Consensus rejected last quote, resubmitting',
+      'Spread tightened to 0.19% — holding',
+      'Flash liquidity in pool 3 — executing taker',
+      'Gas-free swap to USDT — locking 1.4% profit',
+      'Rebalancing LP 60/40 after price move'
+    ];
+    const cpus = ['CQ2-4419', 'CQ4-2891', 'CQ1-7012', 'CQ7-8820', 'CQ3-1455', 'CQ5-6601', 'CQ6-2204', 'CQ8-9931'];
+
+    function spawnTrade() {
+      const isBuy = Math.random() > 0.5;
+      const amt = (Math.random() * 80 + 5).toFixed(1);
+      const rationale = rationales[(Math.random() * rationales.length) | 0];
+      const cpu = cpus[(Math.random() * cpus.length) | 0];
+      const row = document.createElement('div');
+      row.className = 'rounded-xl bg-black/30 border border-white/5 p-3 text-xs flex flex-col gap-1.5 opacity-0 transition-opacity duration-500';
+      row.innerHTML = `
+        <div class="flex items-center gap-2 flex-wrap">
+          <span class="text-[10px] mono text-gray-500">${new Date().toLocaleTimeString([], {hour:'2-digit',minute:'2-digit',second:'2-digit'})}</span>
+          <span class="px-1.5 py-0.5 rounded-md mono text-[10px] font-bold ${isBuy ? 'bg-green-500/15 text-green-400' : 'bg-pink-500/15 text-pink-400'}">${isBuy ? 'BUY' : 'SELL'}</span>
+          <span class="mono text-gray-300 font-bold">${amt}k QUBIC</span>
+        </div>
+        <div class="text-gray-400 leading-snug">${rationale}</div>
+        <div class="text-[10px] mono text-gray-600">${cpu} · UPoW ✓ · 0.00 gas</div>
+      `;
+      feedEl.insertBefore(row, feedEl.firstChild);
+      requestAnimationFrame(() => { row.style.opacity = '1'; });
+      while (feedEl.children.length > 12) feedEl.lastElementChild.remove();
+    }
+
+    // Seed with 4 rows, then stream
+    for (let i = 0; i < 4; i++) spawnTrade();
+    setInterval(spawnTrade, 3400);
+  })();
+
+  /* ==== Qearn: live lock calculator ==== */
+  (() => {
+    const amt = document.getElementById('qeAmount');
+    const wks = document.getElementById('qeWeeks');
+    if (!amt || !wks) return;
+    const amtL = document.getElementById('qeAmountLabel');
+    const wksL = document.getElementById('qeWeeksLabel');
+    const apyL = document.getElementById('qeAPY');
+    const rewL = document.getElementById('qeRewards');
+    const brnL = document.getElementById('qeBurn');
+
+    const fmt = n => Math.round(n).toLocaleString('en-US');
+
+    function update() {
+      const a = +amt.value;
+      const w = +wks.value;
+      // APY curve: ~5% at 1w, ~30% at 52w, concave (bigger early gains, flattens)
+      const apy = 5 + 25 * Math.sqrt(w / 52);
+      const rewards = (a * apy / 100) * (w / 52);
+      const burn = rewards * 0.5; // simplification: half of unearned rewards burn on early exit
+      amtL.textContent = fmt(a);
+      wksL.textContent = w;
+      apyL.textContent = apy.toFixed(1) + '%';
+      rewL.textContent = fmt(rewards);
+      brnL.textContent = fmt(burn);
+    }
+    amt.addEventListener('input', update);
+    wks.addEventListener('input', update);
+    update();
+  })();
+
+  /* ==== Anna: honest 7-bit responder ==== */
+  (() => {
+    const form = document.getElementById('annaForm');
+    const input = document.getElementById('annaInput');
+    const log = document.getElementById('annaLog');
+    if (!form || !input || !log) return;
+
+    const MIN = -64, MAX = 63;
+
+    function appendUser(text) {
+      const div = document.createElement('div');
+      div.className = 'flex items-start gap-3';
+      div.innerHTML = `
+        <div class="w-8 h-8 rounded-xl bg-gray-700 shrink-0 flex items-center justify-center text-xs text-gray-300 mono">you</div>
+        <div class="flex-1">
+          <div class="text-xs mono text-gray-400 mb-1">you <span class="text-gray-600">· now</span></div>
+          <div class="text-white text-sm leading-relaxed"></div>
+        </div>`;
+      div.querySelector('div.text-white').textContent = text;
+      log.appendChild(div);
+      log.scrollTop = log.scrollHeight;
+    }
+
+    function appendAnna(text, isDot) {
+      const div = document.createElement('div');
+      div.className = 'flex items-start gap-3';
+      div.innerHTML = `
+        <div class="w-8 h-8 rounded-xl logo-q shrink-0 flex items-center justify-center text-black font-black mono text-lg">.</div>
+        <div class="flex-1">
+          <div class="text-xs mono text-cyan-400 mb-1">anna <span class="text-gray-500">· thinking...</span></div>
+          <div class="anna-body text-gray-300 text-sm leading-relaxed mono"></div>
+          <div class="anna-foot hidden text-[10px] mono text-gray-600 mt-1.5"></div>
+        </div>`;
+      log.appendChild(div);
+      log.scrollTop = log.scrollHeight;
+      const body = div.querySelector('.anna-body');
+      const foot = div.querySelector('.anna-foot');
+      const label = div.querySelector('.text-xs.mono.text-cyan-400 span');
+
+      // Typing animation
+      let i = 0;
+      const step = () => {
+        if (i <= text.length) {
+          body.textContent = text.slice(0, i);
+          i++;
+          setTimeout(step, isDot ? 400 : 32);
+        } else {
+          label.textContent = '· just now';
+          if (isDot) {
+            foot.classList.remove('hidden');
+            foot.textContent = 'Beyond 7-bit signed integer addition — the rest is yet to come.';
+          } else {
+            foot.classList.remove('hidden');
+            foot.textContent = 'Verified by consensus · 0.00 $QUBIC';
+          }
+          log.scrollTop = log.scrollHeight;
+        }
+      };
+      setTimeout(step, 450);
+    }
+
+    function parse(q) {
+      // Match: a + b  (spaces optional, signs allowed)
+      const m = q.replace(/\s+/g, '').match(/^(-?\d+)\+(-?\d+)$/);
+      if (!m) return null;
+      const a = parseInt(m[1], 10), b = parseInt(m[2], 10);
+      if (a < MIN || a > MAX || b < MIN || b > MAX) return null;
+      const sum = a + b;
+      if (sum < MIN || sum > MAX) return null; // 7-bit overflow = .
+      return sum;
+    }
+
+    form.addEventListener('submit', e => {
+      e.preventDefault();
+      const q = input.value.trim();
+      if (!q) return;
+      appendUser(q);
+      input.value = '';
+      const result = parse(q);
+      if (result === null) {
+        appendAnna('.', true);
+      } else {
+        appendAnna(String(result), false);
+      }
+    });
+  })();
+
+  /* ==== Site-wide ambient neural field ==== */
+  (() => {
+    const canvas = document.getElementById('bgNeural');
+    if (!canvas) return;
+
+    // Disabled on mobile (perf) and for reduced-motion users
+    const mobile = window.matchMedia('(max-width: 767px)').matches;
+    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (mobile) { canvas.style.display = 'none'; return; }
+
+    const ctx = canvas.getContext('2d', { alpha: true });
+    const DPR = Math.min(window.devicePixelRatio || 1, 1.5);
+    let W = 0, H = 0;
+    const NODES = [];
+    const mouse = { x: -9999, y: -9999, active: false };
+
+    function resize() {
+      W = window.innerWidth; H = window.innerHeight;
+      canvas.width = W * DPR; canvas.height = H * DPR;
+      canvas.style.width = W + 'px'; canvas.style.height = H + 'px';
+      ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
+      layout();
+    }
+
+    // Poisson-ish scatter: reject placements too close to previous
+    function layout() {
+      NODES.length = 0;
+      const target = Math.min(42, Math.floor((W * H) / 38000));
+      const minDist = Math.sqrt((W * H) / (target * 1.6));
+      let tries = 0;
+      while (NODES.length < target && tries < target * 40) {
+        tries++;
+        const x = Math.random() * W;
+        const y = Math.random() * H;
+        let ok = true;
+        for (const n of NODES) {
+          if ((n.x - x) ** 2 + (n.y - y) ** 2 < minDist * minDist) { ok = false; break; }
+        }
+        if (ok) {
+          NODES.push({
+            x, y,
+            bx: x, by: y,
+            r: 1 + Math.random() * 0.8,
+            phase: Math.random() * Math.PI * 2,
+            drift: 0.0002 + Math.random() * 0.0003,
+            activity: 0
+          });
+        }
+      }
+    }
+
+    window.addEventListener('mousemove', e => {
+      mouse.x = e.clientX; mouse.y = e.clientY; mouse.active = true;
+    });
+    window.addEventListener('mouseleave', () => { mouse.active = false; mouse.x = mouse.y = -9999; });
+    window.addEventListener('resize', resize);
+    document.addEventListener('visibilitychange', () => {
+      if (!document.hidden) last = performance.now();
+    });
+
+    resize();
+
+    if (reduceMotion) {
+      // Render once statically and stop
+      drawFrame(performance.now());
+      return;
+    }
+
+    let last = performance.now();
+    let frame = 0;
+    function loop(now) {
+      requestAnimationFrame(loop);
+      if (document.hidden) return;
+      frame++;
+      // 30 fps target — skip every other frame
+      if (frame % 2) return;
+      drawFrame(now);
+    }
+
+    function drawFrame(now) {
+      const dt = Math.min(now - last, 80);
+      last = now;
+      ctx.clearRect(0, 0, W, H);
+
+      // Update nodes: slight drift + cursor influence
+      for (const n of NODES) {
+        n.phase += n.drift * dt;
+        n.x = n.bx + Math.cos(n.phase) * 6;
+        n.y = n.by + Math.sin(n.phase * 1.3) * 6;
+        if (mouse.active) {
+          const dx = mouse.x - n.x, dy = mouse.y - n.y;
+          const d2 = dx * dx + dy * dy;
+          const R = 180;
+          if (d2 < R * R) {
+            const d = Math.sqrt(d2);
+            n.activity = Math.max(n.activity, 1 - d / R);
+          }
+        }
+        n.activity *= 0.94;
+      }
+
+      // Sparse connections: only when cursor is near, only between nodes close to each other
+      if (mouse.active) {
+        ctx.lineWidth = 0.6;
+        for (let i = 0; i < NODES.length; i++) {
+          const a = NODES[i];
+          if (a.activity < 0.08) continue;
+          for (let j = i + 1; j < NODES.length; j++) {
+            const b = NODES[j];
+            const d2 = (a.x - b.x) ** 2 + (a.y - b.y) ** 2;
+            if (d2 > 160 * 160) continue;
+            const d = Math.sqrt(d2);
+            const strength = (a.activity + b.activity) * 0.5 * (1 - d / 160);
+            if (strength < 0.05) continue;
+            ctx.strokeStyle = `rgba(35, 255, 255, ${strength * 0.35})`;
+            ctx.beginPath();
+            ctx.moveTo(a.x, a.y);
+            ctx.lineTo(b.x, b.y);
+            ctx.stroke();
+          }
+        }
+      }
+
+      // Draw nodes
+      for (const n of NODES) {
+        const base = 0.12;
+        const alpha = Math.min(0.55, base + n.activity * 0.45);
+        const glowR = 3 + n.activity * 7;
+        const g = ctx.createRadialGradient(n.x, n.y, 0, n.x, n.y, glowR);
+        g.addColorStop(0, `rgba(35, 255, 255, ${alpha})`);
+        g.addColorStop(1, 'rgba(35, 255, 255, 0)');
+        ctx.fillStyle = g;
+        ctx.beginPath();
+        ctx.arc(n.x, n.y, glowR, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.fillStyle = `rgba(160, 250, 255, ${alpha * 1.4})`;
+        ctx.beginPath();
+        ctx.arc(n.x, n.y, n.r, 0, Math.PI * 2);
+        ctx.fill();
+      }
+    }
+
+    requestAnimationFrame(loop);
   })();
 </script>
 
