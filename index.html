@@ -1507,53 +1507,52 @@ require(ok);</pre>
       </div>
     </div>
 
-    <!-- Trading bot feature card -->
-    <div class="mt-10 grid md:grid-cols-3 gap-6 reveal">
-      <!-- Left: Stats -->
-      <div class="md:col-span-2 p-8 rounded-3xl glass-strong border border-teal-500/25">
-        <div class="flex items-center gap-3 mb-6">
-          <div class="w-12 h-12 rounded-2xl bg-teal-500/10 border border-teal-500/30 flex items-center justify-center">
-            <i data-lucide="bot" class="w-6 h-6 text-teal-400"></i>
-          </div>
-          <div>
-            <div class="display font-bold text-white text-xl">Anna DEX Bot</div>
-            <div class="text-xs mono text-gray-500 tracking-wider">Marketplace job · UPoW-verified · non-custodial</div>
-          </div>
-          <span class="ml-auto text-[10px] mono text-teal-400 px-3 py-1 rounded-full bg-teal-500/10 border border-teal-500/30 tracking-widest uppercase">Target economics</span>
+    <!-- Anna's Vaults — Hyperliquid-style strategy leaderboard -->
+    <div class="mt-16 reveal">
+      <div class="flex items-end justify-between mb-8 flex-wrap gap-4">
+        <div>
+          <div class="text-[10px] mono text-teal-400 tracking-[0.3em] mb-2 uppercase">// Anna's Vaults</div>
+          <h3 class="display text-3xl md:text-4xl font-black text-white leading-tight">Copy-trade Anna. <span class="gradient-text">Or deploy your own.</span></h3>
+          <p class="text-sm text-gray-400 mt-3 max-w-2xl">Each vault is a marketplace job: Computors bid to run the strategy, Anna tunes the parameters, consensus verifies every fill. Deposit in $QUBIC, withdraw any epoch, fees are zero.</p>
         </div>
-        <p class="text-gray-300 leading-relaxed mb-6">
-          Post a TRADE job. Computors bid to run Anna's strategy on your behalf. Every execution is verified by consensus, your keys stay in your wallet, fees are zero.
-        </p>
-        <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-          <div>
-            <div class="text-2xl mono font-black gradient-text">42%</div>
-            <div class="text-[10px] text-gray-500 mt-1 tracking-widest uppercase">Simulated APY</div>
-          </div>
-          <div>
-            <div class="text-2xl mono font-black gradient-text">1,247</div>
-            <div class="text-[10px] text-gray-500 mt-1 tracking-widest uppercase">Sim trades / bot</div>
-          </div>
-          <div>
-            <div class="text-2xl mono font-black gradient-text">0.00</div>
-            <div class="text-[10px] text-gray-500 mt-1 tracking-widest uppercase">$QUBIC gas</div>
-          </div>
-          <div>
-            <div class="text-2xl mono font-black gradient-text">100%</div>
-            <div class="text-[10px] text-gray-500 mt-1 tracking-widest uppercase">Non-custodial</div>
-          </div>
+        <div class="flex gap-2">
+          <span class="text-[10px] mono text-gray-500 px-3 py-1.5 rounded-full border border-white/10 tracking-widest uppercase flex items-center gap-1.5">
+            <span class="status-dot status-live"></span> live vaults · 6
+          </span>
+          <span class="text-[10px] mono text-teal-400 px-3 py-1.5 rounded-full bg-teal-500/10 border border-teal-500/30 tracking-widest uppercase">TVL $12.6M</span>
         </div>
       </div>
 
-      <!-- Right: CTA -->
-      <div class="p-8 rounded-3xl gradient-border flex flex-col justify-between">
-        <div>
-          <div class="text-[10px] mono text-teal-400 tracking-widest mb-3 uppercase">Deploy your bot</div>
-          <div class="display text-2xl font-bold text-white mb-3 leading-snug">Post a TRADE job.<br/>Let Computors bid.</div>
-          <p class="text-sm text-gray-400 leading-relaxed">Anna runs the strategy. You keep the keys. Consensus keeps her honest.</p>
+      <!-- Vault leaderboard table -->
+      <div class="rounded-3xl glass-strong border border-teal-500/15 overflow-hidden">
+        <!-- Header row -->
+        <div class="hidden md:grid grid-cols-12 gap-4 px-6 py-3 bg-black/40 border-b border-white/5 text-[10px] mono text-gray-500 tracking-widest uppercase">
+          <div class="col-span-4">Strategy</div>
+          <div class="col-span-2">30d APY</div>
+          <div class="col-span-2">TVL</div>
+          <div class="col-span-1">Risk</div>
+          <div class="col-span-1">Depositors</div>
+          <div class="col-span-2 text-right">Action</div>
         </div>
-        <button onclick="openJobModal()" class="btn-primary px-5 py-3 rounded-2xl text-sm flex items-center justify-center gap-2 mt-6">
+
+        <!-- Vault rows -->
+        <div id="vaultList"></div>
+      </div>
+
+      <!-- Deploy your own CTA -->
+      <div class="mt-6 p-6 rounded-3xl gradient-border flex items-center justify-between flex-wrap gap-4">
+        <div class="flex items-center gap-4">
+          <div class="w-12 h-12 rounded-2xl bg-teal-500/10 border border-teal-500/30 flex items-center justify-center shrink-0">
+            <i data-lucide="sparkles" class="w-6 h-6 text-teal-400"></i>
+          </div>
+          <div>
+            <div class="display font-bold text-white text-lg">Deploy your own strategy</div>
+            <div class="text-xs mono text-gray-500 tracking-wider mt-1">Post a TRADE job · Computors bid · Anna optimizes · you keep the keys</div>
+          </div>
+        </div>
+        <button onclick="openJobModal()" class="btn-primary px-5 py-3 rounded-2xl text-sm flex items-center gap-2">
           <i data-lucide="zap" class="w-4 h-4"></i>
-          Deploy bot
+          New TRADE job
           <i data-lucide="arrow-right" class="w-4 h-4"></i>
         </button>
       </div>
@@ -3156,6 +3155,172 @@ require(ok);</pre>
     // Seed with 4 rows, then stream
     for (let i = 0; i < 4; i++) spawnTrade();
     setInterval(spawnTrade, 3400);
+  })();
+
+  /* ==== Anna's Vaults — Hyperliquid-style strategy leaderboard ==== */
+  (() => {
+    const host = document.getElementById('vaultList');
+    if (!host) return;
+
+    const VAULTS = [
+      { id: 'mm',   name: 'Anna Market Maker',      tag: 'QUBIC/USDT',   apy: 28.4, tvl: 3.21, deps: 1204, risk: 'LOW',    trend: 'up',   desc: 'Posts bids and asks around mid. Rebates + UPoW proof at every fill.', cap: null },
+      { id: 'dn',   name: 'Anna Delta-Neutral',     tag: 'QUBIC/USDT',   apy: 42.1, tvl: 2.41, deps: 847,  risk: 'MED',    trend: 'up',   desc: 'Hedges spot with funding. Target vol 12% annualized.', cap: null },
+      { id: 'lp',   name: 'Anna LP Rebalancer',     tag: 'QUBIC/USDT',   apy: 18.2, tvl: 4.08, deps: 2031, risk: 'LOW',    trend: 'flat', desc: 'Rebalances 60/40 LP every tick move > 2.4%. Fee harvesting.', cap: null },
+      { id: 'mom',  name: 'Anna Momentum',          tag: 'QUBIC/USDT',   apy: 68.3, tvl: 1.82, deps: 412,  risk: 'HIGH',   trend: 'up',   desc: '15m/1h EMA crossover. Flat on ADX < 18.', cap: null },
+      { id: 'arb',  name: 'Anna QX Arb',            tag: 'QX pools',     apy: 94.7, tvl: 0.62, deps: 89,   risk: 'HIGH',   trend: 'up',   desc: 'Cross-pool arbitrage on QX. Capped to preserve edge.', cap: '$1M cap' },
+      { id: 'fnd',  name: 'Anna Funding Sniper',    tag: 'perps',        apy: 112.4, tvl: 0.34, deps: 47,  risk: 'EXP',    trend: 'volatile', desc: 'Shorts high-funding, longs negative-funding pairs. Experimental.', cap: 'Gated · $500K' }
+    ];
+
+    const riskStyles = {
+      LOW:  'bg-green-500/10 text-green-400 border-green-500/30',
+      MED:  'bg-cyan-500/10 text-cyan-400 border-cyan-500/30',
+      HIGH: 'bg-orange-500/10 text-orange-400 border-orange-500/30',
+      EXP:  'bg-pink-500/10 text-pink-400 border-pink-500/30'
+    };
+
+    // Generate sparkline data per vault
+    function makeSpark(trend) {
+      const n = 40;
+      const pts = [];
+      let v = 0.5;
+      for (let i = 0; i < n; i++) {
+        let drift = 0;
+        if (trend === 'up')       drift = 0.012;
+        if (trend === 'flat')     drift = 0.001;
+        if (trend === 'volatile') drift = 0.010;
+        const noise = (Math.random() - 0.5) * (trend === 'volatile' ? 0.10 : 0.035);
+        v = Math.max(0.05, Math.min(0.95, v + drift + noise));
+        pts.push(v);
+      }
+      return pts;
+    }
+
+    function drawSpark(canvas, pts, colorUp) {
+      const ctx = canvas.getContext('2d');
+      const dpr = Math.min(window.devicePixelRatio || 1, 2);
+      const w = canvas.clientWidth, h = canvas.clientHeight;
+      canvas.width = w * dpr; canvas.height = h * dpr;
+      ctx.scale(dpr, dpr);
+      ctx.clearRect(0, 0, w, h);
+      const max = Math.max(...pts), min = Math.min(...pts);
+      const range = Math.max(max - min, 0.01);
+      const g = ctx.createLinearGradient(0, 0, 0, h);
+      g.addColorStop(0, colorUp + '66');
+      g.addColorStop(1, colorUp + '00');
+      ctx.beginPath();
+      pts.forEach((p, i) => {
+        const x = (i / (pts.length - 1)) * w;
+        const y = h - ((p - min) / range) * h * 0.85 - h * 0.05;
+        if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+      });
+      ctx.lineTo(w, h); ctx.lineTo(0, h); ctx.closePath();
+      ctx.fillStyle = g; ctx.fill();
+      ctx.beginPath();
+      pts.forEach((p, i) => {
+        const x = (i / (pts.length - 1)) * w;
+        const y = h - ((p - min) / range) * h * 0.85 - h * 0.05;
+        if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+      });
+      ctx.strokeStyle = colorUp; ctx.lineWidth = 1.5; ctx.stroke();
+    }
+
+    function rowHTML(v, i) {
+      const colorUp = v.trend === 'volatile' ? '#f472b6' : v.risk === 'LOW' ? '#4ade80' : '#00f0c8';
+      return `
+        <div class="vault-row grid md:grid-cols-12 gap-4 px-6 py-5 items-center border-b border-white/5 hover:bg-teal-500/5 transition-colors ${i === 0 ? 'bg-teal-500/[0.03]' : ''}" data-id="${v.id}">
+          <!-- Strategy -->
+          <div class="md:col-span-4 flex items-center gap-3">
+            <div class="w-10 h-10 rounded-xl bg-teal-500/10 border border-teal-500/25 flex items-center justify-center shrink-0 mono text-[11px] text-teal-400 font-bold">#${i + 1}</div>
+            <div class="min-w-0">
+              <div class="flex items-center gap-2 flex-wrap">
+                <span class="display font-bold text-white text-sm md:text-base">${v.name}</span>
+                <span class="text-[10px] mono text-gray-500 tracking-wider">${v.tag}</span>
+                ${v.cap ? `<span class="text-[9px] mono px-1.5 py-0.5 rounded bg-orange-500/10 text-orange-400 border border-orange-500/30 tracking-wider uppercase">${v.cap}</span>` : ''}
+              </div>
+              <div class="text-xs text-gray-400 mt-0.5 leading-snug">${v.desc}</div>
+            </div>
+          </div>
+
+          <!-- APY + sparkline -->
+          <div class="md:col-span-2 flex items-center gap-3">
+            <div>
+              <div class="mono font-black text-xl ${v.trend === 'volatile' ? 'text-pink-400' : 'gradient-text'}" data-apy="${v.apy}">${v.apy.toFixed(1)}%</div>
+              <div class="text-[10px] mono text-gray-500 tracking-wider">30d APY</div>
+            </div>
+            <canvas class="vault-spark flex-1 h-8 max-w-[70px]"></canvas>
+          </div>
+
+          <!-- TVL -->
+          <div class="md:col-span-2">
+            <div class="mono font-bold text-white text-sm" data-tvl="${v.tvl}">$${v.tvl.toFixed(2)}M</div>
+            <div class="text-[10px] mono text-gray-500 tracking-wider">TVL</div>
+          </div>
+
+          <!-- Risk -->
+          <div class="md:col-span-1">
+            <span class="text-[10px] mono px-2 py-1 rounded-md border tracking-widest uppercase font-bold ${riskStyles[v.risk]}">${v.risk}</span>
+          </div>
+
+          <!-- Depositors -->
+          <div class="md:col-span-1">
+            <div class="mono text-white text-sm" data-deps="${v.deps}">${v.deps.toLocaleString()}</div>
+            <div class="text-[10px] mono text-gray-500 tracking-wider">lockers</div>
+          </div>
+
+          <!-- CTA -->
+          <div class="md:col-span-2 flex md:justify-end gap-2">
+            <button onclick="openJobModal()" class="px-4 py-2 rounded-xl bg-teal-500/10 border border-teal-500/30 text-teal-400 text-xs font-bold hover:bg-teal-500/20 transition-colors flex items-center gap-1.5">
+              <i data-lucide="arrow-down-to-line" class="w-3.5 h-3.5"></i>
+              Deposit
+            </button>
+          </div>
+        </div>`;
+    }
+
+    host.innerHTML = VAULTS.map(rowHTML).join('');
+    if (window.lucide) lucide.createIcons();
+
+    // Draw sparklines + keep data for ticks
+    const sparkCanvases = host.querySelectorAll('.vault-spark');
+    const sparkData = VAULTS.map(v => makeSpark(v.trend));
+    const sparkColors = VAULTS.map(v => v.trend === 'volatile' ? '#f472b6' : v.risk === 'LOW' ? '#4ade80' : '#00f0c8');
+    function redrawAll() {
+      sparkCanvases.forEach((c, i) => drawSpark(c, sparkData[i], sparkColors[i]));
+    }
+    redrawAll();
+    window.addEventListener('resize', redrawAll);
+
+    // Live tick: drift APY, TVL, depositors, extend sparklines
+    const apyEls  = host.querySelectorAll('[data-apy]');
+    const tvlEls  = host.querySelectorAll('[data-tvl]');
+    const depsEls = host.querySelectorAll('[data-deps]');
+    setInterval(() => {
+      VAULTS.forEach((v, i) => {
+        // APY drift
+        const da = (Math.random() - 0.5) * (v.risk === 'EXP' ? 3 : v.risk === 'HIGH' ? 1.2 : 0.4);
+        v.apy = Math.max(2, v.apy + da);
+        apyEls[i].textContent = v.apy.toFixed(1) + '%';
+        // TVL drift
+        const dt = (Math.random() - 0.48) * 0.08;
+        v.tvl = Math.max(0.05, v.tvl + dt);
+        tvlEls[i].textContent = '$' + v.tvl.toFixed(2) + 'M';
+        // Depositors drift (mostly up)
+        if (Math.random() > 0.5) {
+          v.deps += (Math.random() > 0.85 ? -1 : 1);
+          depsEls[i].textContent = v.deps.toLocaleString();
+        }
+        // Extend sparkline
+        const last = sparkData[i][sparkData[i].length - 1];
+        let drift = 0;
+        if (v.trend === 'up')       drift = 0.012;
+        if (v.trend === 'flat')     drift = 0.001;
+        if (v.trend === 'volatile') drift = 0.010;
+        const noise = (Math.random() - 0.5) * (v.trend === 'volatile' ? 0.10 : 0.035);
+        const next = Math.max(0.05, Math.min(0.95, last + drift + noise));
+        sparkData[i].push(next); sparkData[i].shift();
+      });
+      redrawAll();
+    }, 2800);
   })();
 
   /* ==== Qearn: live lock calculator ==== */
