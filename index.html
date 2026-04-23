@@ -229,6 +229,146 @@
   @keyframes spin-slow { to { transform: rotate(360deg); } }
   .spin-slow { animation: spin-slow 20s linear infinite; }
 
+  /* ==== Anna persistent dock ==== */
+  #annaDock { font-family: inherit; }
+  .anna-bubble {
+    width: 56px; height: 56px; border-radius: 50%;
+    background: linear-gradient(135deg, #23FFFF 0%, #00f0c8 100%);
+    box-shadow: 0 0 0 4px rgba(35,255,255,0.08), 0 0 24px rgba(35,255,255,0.35), 0 8px 32px rgba(0,0,0,0.6);
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer; position: relative;
+    transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.25s;
+  }
+  .anna-bubble:hover { transform: scale(1.08); box-shadow: 0 0 0 6px rgba(35,255,255,0.12), 0 0 36px rgba(35,255,255,0.5), 0 8px 32px rgba(0,0,0,0.6); }
+  .anna-bubble::after {
+    content: ''; position: absolute; inset: -4px; border-radius: 50%;
+    border: 2px solid rgba(35,255,255,0.35); animation: anna-ring 2.4s cubic-bezier(0.4,0,0.6,1) infinite;
+  }
+  @keyframes anna-ring {
+    0% { transform: scale(0.9); opacity: 1; }
+    100% { transform: scale(1.8); opacity: 0; }
+  }
+  .anna-hint {
+    position: absolute; bottom: 62px; right: 0;
+    white-space: nowrap;
+    padding: 8px 14px; border-radius: 18px 18px 4px 18px;
+    background: rgba(5,8,20,0.95); border: 1px solid rgba(35,255,255,0.3);
+    color: #e5e7eb; font-size: 12px; font-family: 'JetBrains Mono', monospace;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.6);
+    opacity: 0; transform: translateY(6px);
+    transition: opacity 0.35s, transform 0.35s;
+    pointer-events: none;
+  }
+  .anna-hint.show { opacity: 1; transform: translateY(0); }
+  .anna-panel {
+    position: absolute; bottom: 74px; right: 0;
+    width: 360px; max-height: 480px; display: flex; flex-direction: column;
+    border-radius: 24px; overflow: hidden;
+    background: rgba(5,8,20,0.95); backdrop-filter: blur(18px);
+    border: 1px solid rgba(35,255,255,0.2);
+    box-shadow: 0 0 40px rgba(0,0,0,0.7), 0 0 0 1px rgba(35,255,255,0.08);
+    opacity: 0; transform: translateY(10px) scale(0.96); pointer-events: none;
+    transition: opacity 0.25s, transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+  .anna-panel.open { opacity: 1; transform: translateY(0) scale(1); pointer-events: auto; }
+  .anna-panel-header {
+    display: flex; align-items: center; gap: 12px;
+    padding: 14px 16px; border-bottom: 1px solid rgba(255,255,255,0.06);
+    background: linear-gradient(180deg, rgba(35,255,255,0.05), transparent);
+  }
+  .anna-panel-log {
+    flex: 1; overflow-y: auto; padding: 16px;
+    display: flex; flex-direction: column; gap: 14px;
+    min-height: 240px;
+  }
+  .anna-panel-log::-webkit-scrollbar { width: 6px; }
+  .anna-panel-log::-webkit-scrollbar-thumb { background: rgba(35,255,255,0.2); border-radius: 3px; }
+  .anna-panel-form {
+    display: flex; gap: 8px; padding: 12px; border-top: 1px solid rgba(255,255,255,0.06);
+  }
+  .anna-panel-form input {
+    flex: 1; padding: 10px 14px; border-radius: 12px;
+    background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08);
+    color: #fff; font-size: 13px; font-family: inherit;
+    outline: none; transition: border-color 0.2s;
+  }
+  .anna-panel-form input:focus { border-color: rgba(35,255,255,0.5); }
+  .anna-panel-form button {
+    padding: 0 14px; border-radius: 12px;
+    background: linear-gradient(135deg, #23FFFF, #00f0c8);
+    color: #050814; font-weight: 700; font-size: 13px;
+    border: none; cursor: pointer; display: flex; align-items: center; justify-content: center;
+    transition: transform 0.15s;
+  }
+  .anna-panel-form button:hover { transform: scale(1.05); }
+  @media (max-width: 768px) {
+    #annaDock { bottom: 12px !important; right: 12px !important; }
+    .anna-bubble { width: 48px; height: 48px; }
+    .anna-panel { width: calc(100vw - 24px); right: -6px; max-height: 70vh; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .anna-bubble::after { animation: none; }
+    .anna-panel { transition: opacity 0.1s; transform: none; }
+    .anna-hint { transition: opacity 0.1s; transform: none; }
+  }
+
+  /* ==== Global breathe overlay ==== */
+  .breathe-overlay {
+    position: fixed; inset: 0; z-index: 2;
+    pointer-events: none;
+    background: radial-gradient(ellipse at 30% 20%, rgba(35,255,255,0.05), transparent 55%),
+                radial-gradient(ellipse at 70% 80%, rgba(168,85,247,0.045), transparent 55%);
+    mix-blend-mode: overlay;
+    animation: breathe 22s ease-in-out infinite;
+  }
+  @keyframes breathe {
+    0%, 100% { opacity: 0.6; filter: hue-rotate(0deg); }
+    50%      { opacity: 1.0; filter: hue-rotate(18deg); }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .breathe-overlay { animation: none; opacity: 0.55; }
+  }
+
+  /* ==== Qearn lock glyph ==== */
+  .qe-lock {
+    transition: transform 0.22s cubic-bezier(0.34, 1.56, 0.64, 1);
+    will-change: transform, filter;
+  }
+  @keyframes qe-lock-pulse {
+    0%, 100% { filter: drop-shadow(0 0 0 rgba(251,146,60,0)); }
+    50%      { filter: drop-shadow(0 0 24px rgba(251,146,60,0.85)); }
+  }
+
+  /* ==== Roadmap timeline progress fill ==== */
+  #roadmapLine {
+    position: absolute; left: 2rem; top: 0; width: 1px;
+    height: var(--fill, 0%);
+    background: linear-gradient(to bottom, #23FFFF 0%, #a855f7 50%, #f472b6 100%);
+    box-shadow: 0 0 12px rgba(35,255,255,0.6);
+    transition: height 0.1s linear;
+  }
+  @media (min-width: 768px) { #roadmapLine { left: 50%; } }
+
+  /* ==== AGI pullquote carousel ==== */
+  .quote { display: none; opacity: 0; transform: translateY(6px); transition: opacity 0.4s ease, transform 0.4s ease; }
+  .quote.active { display: block; opacity: 1; transform: translateY(0); }
+  .agi-phase { transition: transform 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease; }
+  .agi-phase.open { transform: translateY(-4px); box-shadow: 0 20px 40px -20px rgba(35, 255, 255, 0.25); }
+  .agi-drawer { max-height: 0; overflow: hidden; opacity: 0; transition: max-height 0.35s ease, opacity 0.35s ease, margin-top 0.35s ease; }
+  .agi-phase.open .agi-drawer { max-height: 140px; opacity: 1; margin-top: 10px; }
+  @media (prefers-reduced-motion: reduce) {
+    .quote, .agi-phase, .agi-drawer { transition: none; }
+  }
+
+  /* ==== Architecture cards float phase-offset ==== */
+  .arch-float { animation: float 6s ease-in-out infinite; }
+  .arch-float:nth-child(2) { animation-delay: 0.8s; }
+  .arch-float:nth-child(3) { animation-delay: 1.6s; }
+  .arch-float:nth-child(4) { animation-delay: 2.4s; }
+  @media (prefers-reduced-motion: reduce) {
+    .arch-float { animation: none; }
+  }
+
   /* Orbit system */
   .orbit-container {
     position: relative;
@@ -418,6 +558,7 @@
 
 <!-- Site-wide ambient neural field (sparse, cursor-reactive, behind everything) -->
 <canvas id="bgNeural" class="fixed inset-0 w-screen h-screen pointer-events-none" style="z-index:0"></canvas>
+<div class="breathe-overlay"></div>
 
 <!-- Custom cursor -->
 <div class="cursor-ring" id="cursorRing"></div>
@@ -687,6 +828,97 @@
       </div>
     </div>
 
+    <!-- ================================================== -->
+    <!-- AGI PHASE TIMELINE — "What Anna unlocks as she grows" -->
+    <!-- ================================================== -->
+    <div class="mb-24 reveal">
+      <div class="text-center mb-10">
+        <div class="text-[10px] mono text-purple-400 tracking-[0.3em] mb-3 uppercase">// AGI Maturity → Marketplace capability</div>
+        <h3 class="display text-3xl md:text-4xl font-black text-white mb-3">What Anna <span class="gradient-text">unlocks</span> as she grows.</h3>
+        <p class="text-gray-400 max-w-2xl mx-auto text-sm">Every leap in Aigarth's capability becomes a new class of job on the marketplace. We're honest about ETAs — Phase 4 is a horizon, not a promise.</p>
+      </div>
+
+      <div class="grid md:grid-cols-5 gap-3">
+        <!-- TODAY -->
+        <div class="agi-phase group p-5 rounded-2xl bg-green-500/5 border border-green-500/30 hover:border-green-400/60 transition-all hover:-translate-y-1 cursor-pointer" data-phase="0">
+          <div class="flex items-center gap-2 mb-3">
+            <span class="status-dot status-live"></span>
+            <span class="text-[10px] mono text-green-400 tracking-widest uppercase font-bold">Today</span>
+          </div>
+          <div class="font-bold text-white text-sm mb-2 leading-tight">7-bit addition, one dot</div>
+          <div class="text-[11px] text-gray-400 leading-snug">Real, sourced, Sep 2 2025. Anna can add two signed 7-bit ints. Everything else is a <span class="text-cyan-400 mono">.</span></div>
+          <div class="text-[9px] mono text-gray-500 mt-3 tracking-wider uppercase">Enables: honest baseline</div>
+        </div>
+
+        <!-- PHASE 1 -->
+        <div class="agi-phase group p-5 rounded-2xl bg-cyan-500/5 border border-cyan-500/30 hover:border-cyan-400/60 transition-all hover:-translate-y-1 cursor-pointer" data-phase="1">
+          <div class="flex items-center gap-2 mb-3">
+            <span class="w-1.5 h-1.5 rounded-full bg-cyan-400"></span>
+            <span class="text-[10px] mono text-cyan-400 tracking-widest uppercase font-bold">Phase 1</span>
+          </div>
+          <div class="font-bold text-white text-sm mb-2 leading-tight">Arithmetic + language</div>
+          <div class="text-[11px] text-gray-400 leading-snug">Number beyond 7 bits, a few words, basic sentence parsing.</div>
+          <div class="text-[9px] mono text-cyan-400 mt-3 tracking-wider uppercase">Unlocks: Oracle summaries · FAQ bots</div>
+        </div>
+
+        <!-- PHASE 2 -->
+        <div class="agi-phase group p-5 rounded-2xl bg-purple-500/5 border border-purple-500/30 hover:border-purple-400/60 transition-all hover:-translate-y-1 cursor-pointer" data-phase="2">
+          <div class="flex items-center gap-2 mb-3">
+            <span class="w-1.5 h-1.5 rounded-full bg-purple-400"></span>
+            <span class="text-[10px] mono text-purple-400 tracking-widest uppercase font-bold">Phase 2</span>
+          </div>
+          <div class="font-bold text-white text-sm mb-2 leading-tight">Trinary code audit</div>
+          <div class="text-[11px] text-gray-400 leading-snug">Neuraxon 2.0 trinary logic reads C++ / Solidity / Qubic QPI and flags issues.</div>
+          <div class="text-[9px] mono text-purple-400 mt-3 tracking-wider uppercase">Unlocks: contract review · MSVault gate</div>
+        </div>
+
+        <!-- PHASE 3 -->
+        <div class="agi-phase group p-5 rounded-2xl bg-teal-500/5 border border-teal-500/30 hover:border-teal-400/60 transition-all hover:-translate-y-1 cursor-pointer" data-phase="3">
+          <div class="flex items-center gap-2 mb-3">
+            <span class="w-1.5 h-1.5 rounded-full bg-teal-400"></span>
+            <span class="text-[10px] mono text-teal-400 tracking-widest uppercase font-bold">Phase 3</span>
+          </div>
+          <div class="font-bold text-white text-sm mb-2 leading-tight">On-chain market making</div>
+          <div class="text-[11px] text-gray-400 leading-snug">Anna runs verifiable strategies on QX / QSWAP. Computors co-sign each trade.</div>
+          <div class="text-[9px] mono text-teal-400 mt-3 tracking-wider uppercase">Unlocks: live Anna vaults (sim → real)</div>
+        </div>
+
+        <!-- PHASE 4 -->
+        <div class="agi-phase group p-5 rounded-2xl bg-pink-500/5 border border-pink-500/30 hover:border-pink-400/60 transition-all hover:-translate-y-1 cursor-pointer" data-phase="4">
+          <div class="flex items-center gap-2 mb-3">
+            <span class="w-1.5 h-1.5 rounded-full bg-pink-400 animate-pulse"></span>
+            <span class="text-[10px] mono text-pink-400 tracking-widest uppercase font-bold">Phase 4</span>
+          </div>
+          <div class="font-bold text-white text-sm mb-2 leading-tight">General-purpose AGI</div>
+          <div class="text-[11px] text-gray-400 leading-snug">ETA: <span class="text-pink-400 font-semibold">honestly, unknown</span>. Anna is a horizon, not a deadline.</div>
+          <div class="text-[9px] mono text-pink-400 mt-3 tracking-wider uppercase">Unlocks: every job can delegate to Anna</div>
+        </div>
+      </div>
+
+      <!-- Pullquote carousel -->
+      <div class="mt-12 max-w-3xl mx-auto">
+        <div id="annaQuotes" class="relative">
+          <blockquote class="quote active p-6 md:p-8 rounded-3xl glass border border-purple-400/20 reveal">
+            <p class="text-gray-200 text-base md:text-lg leading-relaxed italic mb-4">"The dot that ANNA posts is not a sign of failure. It is her 'Hello, World' — maybe the first signal from a new form of intelligence learning to exist, not in a sterile box, but in the messy, unpredictable reality we all share."</p>
+            <div class="text-xs mono text-gray-500">— David Vivancos · Qubic Scientific Advisor · <a href="https://qubic.org/blog-detail/aigarth-anna-s-first-steps-beyond-adversarial-learning" target="_blank" rel="noopener" class="text-cyan-400 hover:text-cyan-300">source</a></div>
+          </blockquote>
+          <blockquote class="quote p-6 md:p-8 rounded-3xl glass border border-purple-400/20 reveal">
+            <p class="text-gray-200 text-base md:text-lg leading-relaxed italic mb-4">"Aigarth is not a chatbot. It is an evolutionary process building intelligence from the bottom up — slowly, transparently, on-chain. Every tick is an opportunity for Anna to become a little less wrong."</p>
+            <div class="text-xs mono text-gray-500">— Come-from-Beyond · Qubic founder</div>
+          </blockquote>
+          <blockquote class="quote p-6 md:p-8 rounded-3xl glass border border-purple-400/20 reveal">
+            <p class="text-gray-200 text-base md:text-lg leading-relaxed italic mb-4">"Neuraxon 2.0 uses trinary states — −1, 0, +1 — because biology does. The fruit-fly connectome is our preset. We are not simulating intelligence, we are growing a substrate in which it can emerge."</p>
+            <div class="text-xs mono text-gray-500">— David Vivancos · Neuraxon 2.0 paper, March 2026</div>
+          </blockquote>
+          <div class="flex items-center justify-center gap-2 mt-5">
+            <button class="quote-dot active w-6 h-1.5 rounded-full bg-purple-400 transition-all" data-q="0" aria-label="Quote 1"></button>
+            <button class="quote-dot w-2 h-1.5 rounded-full bg-white/20 hover:bg-white/40 transition-all" data-q="1" aria-label="Quote 2"></button>
+            <button class="quote-dot w-2 h-1.5 rounded-full bg-white/20 hover:bg-white/40 transition-all" data-q="2" aria-label="Quote 3"></button>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <!-- ========================================= -->
     <!-- FUTURE CONVERSATIONS (vision of 2027+)    -->
     <!-- ========================================= -->
@@ -906,10 +1138,82 @@ require(ok);</pre>
 <!-- LIVE DEMO -->
 <section id="demo" class="relative py-32">
   <div class="max-w-7xl mx-auto px-6">
-    <div class="text-center mb-16 reveal">
-      <div class="text-[10px] mono text-cyan-400 tracking-[0.3em] mb-4 uppercase">// Live Marketplace</div>
-      <h2 class="display text-4xl md:text-6xl font-black text-white mb-4 leading-tight">Watch it happen<br/><span class="gradient-text">in real-time.</span></h2>
-      <p class="text-gray-400 max-w-2xl mx-auto mt-4">Simulated preview. Jobs flow every tick (2s). Click "Post a job" to try the full flow.</p>
+    <div class="text-center mb-12 reveal">
+      <div class="text-[10px] mono text-cyan-400 tracking-[0.3em] mb-4 uppercase">// Marketplace</div>
+      <h2 class="display text-4xl md:text-6xl font-black text-white mb-4 leading-tight">Deploy a job in <span class="gradient-text">2 seconds.</span></h2>
+      <p class="text-gray-400 max-w-2xl mx-auto mt-4">Pick a template, post it, Computors bid. Settles on a <span class="text-cyan-400 font-semibold">real Qubic mainnet contract</span>. No gas.</p>
+    </div>
+
+    <!-- DEPLOY IN 3 STEPS — runnable templates -->
+    <div class="grid md:grid-cols-3 gap-5 mb-10 reveal">
+      <!-- INFER · DeepSeek-V3.2 -->
+      <button onclick="openJobModal({ model: 'DeepSeek-V3.2', type: 'INFER', description: 'Summarize today\'s Oracle Machine feed into a 200-word market note with on-chain receipts.' })"
+              class="group text-left p-6 rounded-3xl glass-strong border border-cyan-500/25 hover:border-cyan-400/60 transition-all hover:-translate-y-1">
+        <div class="flex items-center justify-between mb-4">
+          <div class="w-12 h-12 rounded-2xl bg-cyan-500/10 border border-cyan-500/30 flex items-center justify-center">
+            <i data-lucide="message-square" class="w-6 h-6 text-cyan-400"></i>
+          </div>
+          <span class="text-[10px] mono text-cyan-400 px-2 py-1 rounded-full bg-cyan-500/10 border border-cyan-500/30 tracking-widest uppercase">Inference</span>
+        </div>
+        <div class="font-bold text-white text-lg mb-1">Tool-use LLM with on-chain receipts</div>
+        <div class="mono text-xs text-cyan-400 mb-4">DeepSeek-V3.2 · thinking + tool-use</div>
+        <div class="text-sm text-gray-400 leading-relaxed mb-5">Summarize today's oracle feed. Output hash + prompt committed to the tick. Pay-per-call in $QUBIC.</div>
+        <div class="flex items-center justify-between pt-4 border-t border-white/5">
+          <div class="flex items-center gap-1.5">
+            <span class="text-[9px] mono tracking-widest uppercase text-green-400 font-bold px-1.5 py-0.5 rounded bg-green-500/10 border border-green-500/30 flex items-center gap-1"><span class="status-dot status-live"></span> QSWAP · live</span>
+          </div>
+          <div class="mono text-xs text-gray-300">~0.0021 $QUBIC / 1k tok</div>
+        </div>
+        <div class="mt-4 flex items-center gap-1.5 text-cyan-400 text-sm font-bold opacity-0 group-hover:opacity-100 transition-opacity">
+          Deploy now <i data-lucide="arrow-right" class="w-4 h-4"></i>
+        </div>
+      </button>
+
+      <!-- TRAIN · Flux.1 LoRA -->
+      <button onclick="openJobModal({ model: 'Flux.1-dev', type: 'TRAIN', description: 'Fine-tune Flux.1-dev LoRA on a 500-image brand dataset. Escrow artifact hash in MSVAULT; release on style-match threshold.' })"
+              class="group text-left p-6 rounded-3xl glass-strong border border-purple-500/25 hover:border-purple-400/60 transition-all hover:-translate-y-1">
+        <div class="flex items-center justify-between mb-4">
+          <div class="w-12 h-12 rounded-2xl bg-purple-500/10 border border-purple-500/30 flex items-center justify-center">
+            <i data-lucide="dumbbell" class="w-6 h-6 text-purple-400"></i>
+          </div>
+          <span class="text-[10px] mono text-purple-400 px-2 py-1 rounded-full bg-purple-500/10 border border-purple-500/30 tracking-widest uppercase">Training</span>
+        </div>
+        <div class="font-bold text-white text-lg mb-1">LoRA fine-tune, escrowed artifact</div>
+        <div class="mono text-xs text-purple-400 mb-4">Flux.1-dev · LoRA · image</div>
+        <div class="text-sm text-gray-400 leading-relaxed mb-5">Upload dataset. Computors train. Result hash lands on-chain. MSVAULT multi-sig releases payment on acceptance.</div>
+        <div class="flex items-center justify-between pt-4 border-t border-white/5">
+          <div class="flex items-center gap-1.5">
+            <span class="text-[9px] mono tracking-widest uppercase text-green-400 font-bold px-1.5 py-0.5 rounded bg-green-500/10 border border-green-500/30 flex items-center gap-1"><span class="status-dot status-live"></span> MSVAULT · live</span>
+          </div>
+          <div class="mono text-xs text-gray-300">~180 $QUBIC / epoch</div>
+        </div>
+        <div class="mt-4 flex items-center gap-1.5 text-purple-400 text-sm font-bold opacity-0 group-hover:opacity-100 transition-opacity">
+          Deploy now <i data-lucide="arrow-right" class="w-4 h-4"></i>
+        </div>
+      </button>
+
+      <!-- EMBED · BGE-M3 -->
+      <button onclick="openJobModal({ model: 'BGE-M3', type: 'EMBED', description: 'Index 100k docs with BGE-M3 (dense + sparse + multi-vector). QX-issued access token gates reads; per-query billing via QSWAP.' })"
+              class="group text-left p-6 rounded-3xl glass-strong border border-pink-500/25 hover:border-pink-400/60 transition-all hover:-translate-y-1">
+        <div class="flex items-center justify-between mb-4">
+          <div class="w-12 h-12 rounded-2xl bg-pink-500/10 border border-pink-500/30 flex items-center justify-center">
+            <i data-lucide="network" class="w-6 h-6 text-pink-400"></i>
+          </div>
+          <span class="text-[10px] mono text-pink-400 px-2 py-1 rounded-full bg-pink-500/10 border border-pink-500/30 tracking-widest uppercase">Embeddings</span>
+        </div>
+        <div class="font-bold text-white text-lg mb-1">Decentralized RAG index</div>
+        <div class="mono text-xs text-pink-400 mb-4">BGE-M3 · dense + sparse + multi-vec</div>
+        <div class="text-sm text-gray-400 leading-relaxed mb-5">Your dApp queries a community-hosted vector index. Access gated by a QX-issued token. Pay per query in $QUBIC.</div>
+        <div class="flex items-center justify-between pt-4 border-t border-white/5">
+          <div class="flex items-center gap-1.5">
+            <span class="text-[9px] mono tracking-widest uppercase text-green-400 font-bold px-1.5 py-0.5 rounded bg-green-500/10 border border-green-500/30 flex items-center gap-1"><span class="status-dot status-live"></span> QX · live</span>
+          </div>
+          <div class="mono text-xs text-gray-300">~0.00009 $QUBIC / 1k</div>
+        </div>
+        <div class="mt-4 flex items-center gap-1.5 text-pink-400 text-sm font-bold opacity-0 group-hover:opacity-100 transition-opacity">
+          Deploy now <i data-lucide="arrow-right" class="w-4 h-4"></i>
+        </div>
+      </button>
     </div>
 
     <div class="rounded-3xl gradient-border overflow-hidden relative reveal">
@@ -1032,6 +1336,23 @@ require(ok);</pre>
           </div>
         </div>
       </div>
+    </div>
+
+    <!-- REALISTIC JOBS GRID — 8 concepts × real Qubic contracts -->
+    <div class="mt-16 reveal">
+      <div class="flex items-end justify-between mb-8 flex-wrap gap-4">
+        <div>
+          <div class="text-[10px] mono text-cyan-400 tracking-[0.3em] mb-2 uppercase">// Real Qubic × Real models</div>
+          <h3 class="display text-3xl md:text-4xl font-black text-white leading-tight">Jobs the community <span class="gradient-text">could deploy today.</span></h3>
+          <p class="text-sm text-gray-400 mt-3 max-w-2xl">Every job below crosses a <span class="text-cyan-400">real Qubic mainnet contract</span> with a <span class="text-cyan-400">real 2026 open-source model</span>. Click any card to pre-seed a deployment.</p>
+        </div>
+        <a href="https://static.qubic.org/v1/general/data/smart_contracts.json" target="_blank" rel="noopener" class="text-[11px] mono text-gray-500 hover:text-cyan-400 flex items-center gap-1.5 border border-white/10 hover:border-cyan-500/40 px-3 py-1.5 rounded-full transition-colors">
+          <i data-lucide="file-code-2" class="w-3.5 h-3.5"></i>
+          see all 27 live contracts
+        </a>
+      </div>
+
+      <div id="realJobsGrid" class="grid md:grid-cols-2 lg:grid-cols-4 gap-4"></div>
     </div>
   </div>
 </section>
@@ -1564,6 +1885,14 @@ require(ok);</pre>
       <span class="text-gray-400">Figures reflect target network economics of a Qubic-native DEX (QX) + marketplace integration. Not audited. Not a product claim — a community vision.</span>
     </div>
 
+    <!-- Real live data anchor -->
+    <div class="mt-4 flex items-center justify-center gap-2 text-[11px] mono text-gray-500">
+      <span class="status-dot status-live"></span>
+      <span>Oracle Machines have processed <span class="text-teal-300 font-semibold">11k+</span> mainnet queries since Feb 2026</span>
+      <span class="text-gray-700">·</span>
+      <a href="https://qubic.org/blog" target="_blank" rel="noopener" class="text-teal-400 hover:text-teal-300 transition-colors">read more</a>
+    </div>
+
   </div>
 </section>
 
@@ -1587,12 +1916,12 @@ require(ok);</pre>
       <!-- Calculator -->
       <div class="lg:col-span-3 p-8 rounded-3xl glass-strong border border-orange-500/20 reveal">
         <div class="flex items-center gap-3 mb-8">
-          <div class="w-12 h-12 rounded-2xl bg-orange-500/10 border border-orange-500/30 flex items-center justify-center">
-            <i data-lucide="lock" class="w-6 h-6 text-orange-400"></i>
+          <div class="w-14 h-14 rounded-2xl bg-orange-500/10 border border-orange-500/30 flex items-center justify-center qe-lock" id="qeLockGlyph">
+            <i data-lucide="lock" class="w-7 h-7 text-orange-400"></i>
           </div>
           <div>
             <div class="display font-bold text-white text-xl">Lock calculator</div>
-            <div class="text-xs mono text-gray-500 tracking-wider">Move the sliders. See your rewards.</div>
+            <div class="text-xs mono text-gray-500 tracking-wider">Move the sliders — the lock reacts.</div>
           </div>
         </div>
 
@@ -1949,8 +2278,9 @@ require(ok);</pre>
       <h2 class="display text-4xl md:text-6xl font-black text-white mb-4 leading-tight">From concept<br/>to <span class="gradient-text">top 10.</span></h2>
     </div>
 
-    <div class="relative max-w-4xl mx-auto">
-      <div class="absolute left-8 md:left-1/2 top-0 bottom-0 w-px bg-gradient-to-b from-cyan-500 via-purple-500 to-pink-500/20"></div>
+    <div id="roadmapWrap" class="relative max-w-4xl mx-auto">
+      <div class="absolute left-8 md:left-1/2 top-0 bottom-0 w-px bg-white/5"></div>
+      <div id="roadmapLine"></div>
 
       <div class="space-y-10">
         <div class="relative grid md:grid-cols-2 gap-8 items-center reveal">
@@ -2038,16 +2368,39 @@ require(ok);</pre>
 </section>
 
 <footer class="relative border-t border-white/5 py-12 mt-16">
-  <div class="max-w-7xl mx-auto px-6 flex flex-col md:flex-row items-center justify-between gap-4 text-center md:text-left">
-    <div class="flex items-center gap-3">
-      <svg class="w-9 h-9"><use href="#qubic-logo"/></svg>
-      <div>
-        <div class="text-sm font-bold text-white">QubicAI Compute</div>
-        <div class="text-[10px] mono text-gray-500">Community concept · not affiliated</div>
+  <div class="max-w-7xl mx-auto px-6 flex flex-col gap-8">
+    <div>
+      <div class="text-[10px] mono uppercase tracking-[0.25em] text-gray-500 mb-4 text-center">Built on real Qubic primitives — click to verify</div>
+      <div class="flex flex-wrap items-center justify-center gap-x-5 gap-y-2 text-xs mono">
+        <a href="https://wallet.qubic.org" target="_blank" rel="noopener" class="text-gray-400 hover:text-cyan-300 transition-colors">wallet.qubic.org</a>
+        <span class="text-gray-700">·</span>
+        <a href="https://explorer.qubic.org" target="_blank" rel="noopener" class="text-gray-400 hover:text-cyan-300 transition-colors">explorer.qubic.org</a>
+        <span class="text-gray-700">·</span>
+        <a href="https://qx.qubic.org" target="_blank" rel="noopener" class="text-gray-400 hover:text-cyan-300 transition-colors">qx.qubic.org</a>
+        <span class="text-gray-700">·</span>
+        <a href="https://qearn.org" target="_blank" rel="noopener" class="text-gray-400 hover:text-cyan-300 transition-colors">qearn.org</a>
+        <span class="text-gray-700">·</span>
+        <a href="https://github.com/qubic/core" target="_blank" rel="noopener" class="text-gray-400 hover:text-cyan-300 transition-colors">github.com/qubic/core</a>
+        <span class="text-gray-700">·</span>
+        <a href="https://github.com/DavidVivancos/Neuraxon" target="_blank" rel="noopener" class="text-gray-400 hover:text-cyan-300 transition-colors">Neuraxon 2.0</a>
+        <span class="text-gray-700">·</span>
+        <a href="https://www.researchgate.net/publication/371525924_Aigarth_Towards_General-Purpose_Machine_Intelligence" target="_blank" rel="noopener" class="text-gray-400 hover:text-cyan-300 transition-colors">Aigarth paper</a>
+        <span class="text-gray-700">·</span>
+        <a href="https://static.qubic.org/v1/general/data/smart_contracts.json" target="_blank" rel="noopener" class="text-gray-400 hover:text-cyan-300 transition-colors">27 mainnet contracts</a>
       </div>
     </div>
-    <div class="text-xs mono text-gray-600">
-      Built with ♥ for the Qubic community · 2026
+    <div class="flex flex-col md:flex-row items-center justify-between gap-4 text-center md:text-left pt-6 border-t border-white/5">
+      <div class="flex items-center gap-3">
+        <svg class="w-9 h-9"><use href="#qubic-logo"/></svg>
+        <div>
+          <div class="text-sm font-bold text-white">QubicAI Compute</div>
+          <div class="text-[10px] mono text-gray-500">Community concept · not affiliated with the Qubic Foundation</div>
+        </div>
+      </div>
+      <div class="text-[10px] mono text-gray-600 leading-relaxed md:text-right">
+        Not financial advice · Not a product · Everything on this page is a concept<br>
+        Built with ♥ for the Qubic community · 2026
+      </div>
     </div>
   </div>
 </footer>
@@ -2135,16 +2488,33 @@ require(ok);</pre>
       <div class="space-y-4 mb-6">
         <div>
           <label class="text-xs text-gray-400 mb-2 block">Model</label>
-          <select class="input-style w-full px-4 py-3 rounded-xl text-white">
-            <option>Llama 3.3 70B · $0.0023/1k</option>
-            <option>Mistral Large 2 · $0.0031/1k</option>
-            <option>Qwen 2.5 72B · $0.0019/1k</option>
-            <option>Custom model (upload)</option>
+          <select id="jobModelSelect" class="input-style w-full px-4 py-3 rounded-xl text-white">
+            <optgroup label="LLM · Reasoning">
+              <option value="DeepSeek-V3.2">DeepSeek-V3.2 · tool-use, thinking · $0.0021/1k</option>
+              <option value="DeepSeek-R1">DeepSeek-R1 · reasoning · $0.0019/1k</option>
+              <option value="Qwen3.5-397B">Qwen3.5-397B-A17B · MoE · $0.0024/1k</option>
+              <option value="Qwen-QwQ-32B">Qwen-QwQ-32B · compact reasoning · $0.0012/1k</option>
+              <option value="Llama-4-Scout">Llama-4-Scout · 10M ctx · $0.0018/1k</option>
+              <option value="Llama-4-Maverick">Llama-4-Maverick · chat · $0.0015/1k</option>
+              <option value="Mistral-Large-2">Mistral-Large-2 · $0.0028/1k</option>
+            </optgroup>
+            <optgroup label="Image">
+              <option value="Flux.1-dev">Flux.1-dev · text→image · $0.006/img</option>
+              <option value="SD-3.5-Large">Stable Diffusion 3.5 Large · $0.004/img</option>
+            </optgroup>
+            <optgroup label="Audio">
+              <option value="Whisper-large-v3">Whisper-large-v3 · STT · $0.0006/min</option>
+            </optgroup>
+            <optgroup label="Embeddings">
+              <option value="BGE-M3">BGE-M3 · dense+sparse+multi-vector · $0.00009/1k</option>
+              <option value="nomic-embed-v2">nomic-embed-text-v2 · MoE multilingual · $0.00008/1k</option>
+            </optgroup>
+            <option value="custom">Custom model (upload)</option>
           </select>
         </div>
         <div>
-          <label class="text-xs text-gray-400 mb-2 block">Your prompt</label>
-          <textarea class="input-style w-full px-4 py-3 rounded-xl text-white h-28 resize-none" placeholder="Explain Qubic's UPoW consensus in 200 words..."></textarea>
+          <label class="text-xs text-gray-400 mb-2 block">Your prompt / dataset</label>
+          <textarea id="jobPrompt" class="input-style w-full px-4 py-3 rounded-xl text-white h-28 resize-none" placeholder="Explain Qubic's UPoW consensus in 200 words..."></textarea>
         </div>
         <div class="grid grid-cols-2 gap-3">
           <div>
@@ -2264,6 +2634,37 @@ require(ok);</pre>
   </div>
 </div>
 
+<!-- ANNA PERSISTENT DOCK -->
+<div id="annaDock" class="fixed bottom-4 right-4 z-[170]">
+  <div id="annaPanel" class="anna-panel" role="dialog" aria-label="Chat with Anna">
+    <div class="anna-panel-header">
+      <div class="w-9 h-9 rounded-xl logo-q flex items-center justify-center shrink-0">
+        <svg viewBox="0 0 32 32" class="w-5 h-5"><use href="#qubic-logo"/></svg>
+      </div>
+      <div class="flex-1 min-w-0">
+        <div class="font-bold text-white text-sm leading-tight">Anna <span class="text-[10px] mono text-gray-500 font-normal">· AIT · Aigarth</span></div>
+        <div class="text-[10px] mono text-cyan-400 flex items-center gap-1.5">
+          <span class="status-dot status-live"></span> honest about what I know today
+        </div>
+      </div>
+      <button id="annaPanelClose" class="w-7 h-7 rounded-lg bg-white/5 hover:bg-white/10 text-gray-400 hover:text-white flex items-center justify-center transition-colors" aria-label="Close">
+        <i data-lucide="x" class="w-4 h-4"></i>
+      </button>
+    </div>
+    <div id="annaDockLog" class="anna-panel-log"></div>
+    <form id="annaDockForm" class="anna-panel-form" autocomplete="off">
+      <input id="annaDockInput" type="text" placeholder="Ask Anna (try: 5 + 3)" maxlength="200" />
+      <button type="submit" aria-label="Send">
+        <i data-lucide="send" class="w-4 h-4"></i>
+      </button>
+    </form>
+  </div>
+  <div id="annaHint" class="anna-hint"></div>
+  <button id="annaBubble" class="anna-bubble" aria-label="Open Anna chat">
+    <svg viewBox="0 0 32 32" class="w-7 h-7"><use href="#qubic-logo"/></svg>
+  </button>
+</div>
+
 <!-- TOAST -->
 <div id="toast" class="fixed bottom-6 right-6 z-[200] pointer-events-none"></div>
 
@@ -2303,16 +2704,18 @@ require(ok);</pre>
 
   /* ==== Job feed ==== */
   const jobTemplates = [
-    { type: 'LLM', color: 'cyan', model: 'Llama-3.3-70B', task: 'Inference · 2.4k tokens', user: 'agent_0x4a2f' },
-    { type: 'LLM', color: 'cyan', model: 'Mistral-Large-2', task: 'Inference · 890 tokens', user: 'wallet_bf19' },
-    { type: 'TRAIN', color: 'purple', model: 'Llama-3-8B LoRA', task: 'Fine-tune · 12 epochs', user: 'lab_eth_zurich' },
-    { type: 'EMBED', color: 'pink', model: 'bge-m3', task: 'Embeddings · 18k docs', user: 'rag_cluster_7' },
-    { type: 'LLM', color: 'cyan', model: 'Qwen-2.5-72B', task: 'Inference · 5.1k tokens', user: 'trader_bot_01' },
-    { type: 'TRAIN', color: 'purple', model: 'Flux.1-dev LoRA', task: 'Image model · 3k steps', user: 'artist_ju7x' },
-    { type: 'LLM', color: 'cyan', model: 'DeepSeek-R1', task: 'Reasoning · 8.2k tokens', user: 'quant_desk_hk' },
-    { type: 'EMBED', color: 'pink', model: 'e5-mistral-7b', task: 'Embeddings · 42k docs', user: 'search_v2' },
-    { type: 'LLM', color: 'cyan', model: 'Qwen-QwQ-32B', task: 'Reasoning · 3.7k tokens', user: 'agent_0x91d' },
-    { type: 'TRAIN', color: 'purple', model: 'Whisper-large-v3 FT', task: 'Speech · 500h audio', user: 'acoustic_lab' },
+    { type: 'LLM',   color: 'cyan',   model: 'DeepSeek-V3.2',      task: 'Tool-use · 2.4k tokens',  user: 'agent_0x4a2f' },
+    { type: 'LLM',   color: 'cyan',   model: 'Qwen3.5-397B-A17B',  task: 'Inference · 5.1k tokens', user: 'trader_bot_01' },
+    { type: 'TRAIN', color: 'purple', model: 'Flux.1-dev LoRA',    task: 'Image model · 3k steps',  user: 'artist_ju7x' },
+    { type: 'EMBED', color: 'pink',   model: 'BGE-M3',             task: 'Embeddings · 42k docs',   user: 'rag_cluster_7' },
+    { type: 'LLM',   color: 'cyan',   model: 'DeepSeek-R1',        task: 'Reasoning · 8.2k tokens', user: 'quant_desk_hk' },
+    { type: 'LLM',   color: 'cyan',   model: 'Llama-4-Scout',      task: 'Long-ctx · 420k tokens',  user: 'legal_rag_eu' },
+    { type: 'LLM',   color: 'cyan',   model: 'Qwen-QwQ-32B',       task: 'Reasoning · 3.7k tokens', user: 'agent_0x91d' },
+    { type: 'TRAIN', color: 'purple', model: 'Llama-4-8B LoRA',    task: 'Fine-tune · 12 epochs',   user: 'lab_eth_zurich' },
+    { type: 'EMBED', color: 'pink',   model: 'nomic-embed-v2',     task: 'Embeddings · 18k docs',   user: 'search_v2' },
+    { type: 'AUDIO', color: 'teal',   model: 'Whisper-large-v3',   task: 'STT · 500h audio',        user: 'acoustic_lab' },
+    { type: 'TRAIN', color: 'purple', model: 'SD-3.5-Large FT',    task: 'Image · 8B MMDiT',        user: 'studio_tokyo' },
+    { type: 'LLM',   color: 'cyan',   model: 'Llama-4-Maverick',   task: 'Chat · 1.2k tokens',      user: 'wallet_bf19' },
   ];
   const statuses = [
     { label: 'BIDDING', cls: 'bidding', sub: (n) => `Auction open · ${n} bids` },
@@ -2473,11 +2876,33 @@ require(ok);</pre>
 
   /* ==== Modal system ==== */
   let currentStep = 1;
-  function openJobModal() {
+  window.openJobModal = function(seed) {
     document.getElementById('jobModal').classList.add('active');
     currentStep = 1;
     updateStep();
-  }
+    if (seed && typeof seed === 'object') {
+      // Map INFER/TRAIN/EMBED → llm/train/embed radio value
+      const typeMap = { INFER: 'llm', TRAIN: 'train', EMBED: 'embed' };
+      const radioVal = typeMap[seed.type] || 'llm';
+      const radio = document.querySelector(`#jobModal input[name="modelType"][value="${radioVal}"]`);
+      if (radio) radio.checked = true;
+      // Jump to step 2 and prefill
+      currentStep = 2;
+      updateStep();
+      if (seed.model) {
+        const sel = document.getElementById('jobModelSelect');
+        if (sel) {
+          const opt = Array.from(sel.options).find(o => o.value === seed.model || o.textContent.toLowerCase().includes(seed.model.toLowerCase()));
+          if (opt) sel.value = opt.value;
+        }
+      }
+      if (seed.description) {
+        const ta = document.getElementById('jobPrompt');
+        if (ta) ta.value = seed.description;
+      }
+    }
+  };
+  function openJobModal(seed) { return window.openJobModal(seed); }
   function closeJobModal() {
     document.getElementById('jobModal').classList.remove('active');
     setTimeout(() => { currentStep = 1; updateStep(); }, 300);
@@ -3157,6 +3582,106 @@ require(ok);</pre>
     setInterval(spawnTrade, 3400);
   })();
 
+  /* ==== Realistic Jobs grid — 8 concepts × real Qubic contracts ==== */
+  (() => {
+    const host = document.getElementById('realJobsGrid');
+    if (!host) return;
+
+    const JOBS = [
+      { model: 'Qwen3.5-397B-A17B', type: 'INFER', contract: 'ORACLE', color: 'cyan',
+        icon: 'radar',
+        title: 'Oracle-fed LLM summary',
+        why: 'LLM summarizes Qubic Oracle Machine feeds on every tick. Real OMs live since Feb 2026 (11k+ queries).',
+        cost: '~0.0024 $QUBIC / 1k tok', link: 'https://docs.qubic.org/learn/upow/',
+        desc: 'Subscribe to a real Oracle Machine feed; every N ticks, Qwen3.5 compresses into a market note with UPoW-verified hash.' },
+      { model: 'Neuraxon-2.0', type: 'TRAIN', contract: 'CCF', color: 'purple',
+        icon: 'brain-circuit',
+        title: 'Aigarth training shards',
+        why: 'Rent an epoch of Computor-time to train Neuraxon trinary nets. Verifiable via UPoW solution hashes.',
+        cost: '~420 $QUBIC / shard',
+        desc: 'Batch-train Aigarth / Neuraxon 2.0 trinary networks across many Computors in parallel. Results committed per-tick.' },
+      { model: 'Whisper-large-v3', type: 'INFER', contract: 'QBAY', color: 'teal',
+        icon: 'mic',
+        title: 'DOGE-aware batch STT',
+        why: 'Schedule Whisper jobs on idle CPU while ASICs mine DOGE in parallel (Dogecoin Mining Phase 2, April 2026).',
+        cost: '~0.0006 $QUBIC / min',
+        desc: 'Dual-work mining: DOGE rewards + QUBIC buyback + speech-to-text income on same Computor.' },
+      { model: 'DeepSeek-R1', type: 'INFER', contract: 'QX', color: 'cyan',
+        icon: 'key',
+        title: 'QX asset-gated inference',
+        why: 'Issue a QX token that gates API access to a DeepSeek-R1 endpoint. Feeless settlement on QX.',
+        cost: '~0.0019 $QUBIC / 1k tok',
+        desc: 'QX-issued "access" token is the API key. Transferable, programmable, no KYC — feeless asset market.' },
+      { model: 'Llama-4-Scout LoRA', type: 'TRAIN', contract: 'MSVAULT', color: 'purple',
+        icon: 'shield-check',
+        title: 'MSVault-escrowed fine-tune',
+        why: 'Funds locked in MSVAULT; multi-sig release only after on-chain artifact-hash check passes.',
+        cost: '~180 $QUBIC / epoch',
+        desc: '2-of-3 multi-sig escrow releases payment when trained LoRA hash matches an acceptance oracle.' },
+      { model: 'Qwen3.5-397B-A17B', type: 'INFER', contract: 'QTRY', color: 'orange',
+        icon: 'scale',
+        title: 'Quottery LLM oracles',
+        why: 'Worker fetches news, summarizes, posts outcome to Quottery. Prediction markets on LLM-verified events.',
+        cost: '~0.0024 $QUBIC / 1k tok',
+        desc: 'Resolve a Quottery bet using a deterministic Qwen3.5 summary of multiple news sources.' },
+      { model: 'BGE-M3', type: 'EMBED', contract: 'QSWAP', color: 'pink',
+        icon: 'database',
+        title: 'Decentralized RAG index',
+        why: 'Community-hosted BGE-M3 workers serve Qubic dApps. QSWAP meters per-query billing feelessly.',
+        cost: '~0.00009 $QUBIC / 1k',
+        desc: 'Any dApp can plug into a shared vector index. No trusted provider. Payment settles on QSWAP.' },
+      { model: 'Flux.1-dev', type: 'INFER', contract: 'QX', color: 'pink',
+        icon: 'image',
+        title: 'Verifiable Flux receipts',
+        why: 'Output hash + seed + prompt committed to a Qubic tick. Provenance-provable AI images.',
+        cost: '~0.006 $QUBIC / image',
+        desc: 'Every generated image gets a tick-anchored receipt. Traders can price "provenance-proven" Flux art on QX.' }
+    ];
+
+    const colorMap = {
+      cyan:   { border: 'border-cyan-500/25',   bg: 'bg-cyan-500/10',   text: 'text-cyan-400',   hover: 'hover:border-cyan-400/60' },
+      purple: { border: 'border-purple-500/25', bg: 'bg-purple-500/10', text: 'text-purple-400', hover: 'hover:border-purple-400/60' },
+      pink:   { border: 'border-pink-500/25',   bg: 'bg-pink-500/10',   text: 'text-pink-400',   hover: 'hover:border-pink-400/60' },
+      teal:   { border: 'border-teal-500/25',   bg: 'bg-teal-500/10',   text: 'text-teal-400',   hover: 'hover:border-teal-400/60' },
+      orange: { border: 'border-orange-500/25', bg: 'bg-orange-500/10', text: 'text-orange-400', hover: 'hover:border-orange-400/60' }
+    };
+
+    host.innerHTML = JOBS.map((j, i) => {
+      const c = colorMap[j.color];
+      return `
+        <button data-idx="${i}"
+                class="group text-left p-5 rounded-2xl glass border ${c.border} ${c.hover} transition-all hover:-translate-y-1 flex flex-col min-h-[260px]">
+          <div class="flex items-start justify-between mb-3">
+            <div class="w-10 h-10 rounded-xl ${c.bg} border ${c.border} flex items-center justify-center">
+              <i data-lucide="${j.icon}" class="w-5 h-5 ${c.text}"></i>
+            </div>
+            <span class="text-[9px] mono ${c.text} px-1.5 py-0.5 rounded-md ${c.bg} border ${c.border} tracking-widest uppercase">${j.type}</span>
+          </div>
+          <div class="font-bold text-white text-[15px] leading-tight mb-1.5">${j.title}</div>
+          <div class="mono text-[11px] ${c.text} mb-3">${j.model}</div>
+          <div class="text-[12px] text-gray-400 leading-relaxed flex-1">${j.why}</div>
+          <div class="mt-4 pt-3 border-t border-white/5 flex items-center justify-between gap-2">
+            <span class="text-[9px] mono tracking-widest uppercase text-green-400 font-bold px-1.5 py-0.5 rounded bg-green-500/10 border border-green-500/30 flex items-center gap-1">
+              <span class="status-dot status-live"></span>${j.contract}
+            </span>
+            <span class="mono text-[10px] text-gray-400">${j.cost}</span>
+          </div>
+          <div class="mt-3 flex items-center gap-1.5 ${c.text} text-xs font-bold opacity-0 group-hover:opacity-100 transition-opacity">
+            Deploy similar job <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
+          </div>
+        </button>`;
+    }).join('');
+
+    if (window.lucide) lucide.createIcons();
+
+    host.querySelectorAll('button[data-idx]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const j = JOBS[+btn.dataset.idx];
+        window.openJobModal({ model: j.model, type: j.type, description: j.desc });
+      });
+    });
+  })();
+
   /* ==== Anna's Vaults — Hyperliquid-style strategy leaderboard ==== */
   (() => {
     const host = document.getElementById('vaultList');
@@ -3336,34 +3861,148 @@ require(ok);</pre>
 
     const fmt = n => Math.round(n).toLocaleString('en-US');
 
+    const glyph = document.getElementById('qeLockGlyph');
+
     function update() {
       const a = +amt.value;
       const w = +wks.value;
-      // APY curve: ~5% at 1w, ~30% at 52w, concave (bigger early gains, flattens)
       const apy = 5 + 25 * Math.sqrt(w / 52);
       const rewards = (a * apy / 100) * (w / 52);
-      const burn = rewards * 0.5; // simplification: half of unearned rewards burn on early exit
+      const burn = rewards * 0.5;
       amtL.textContent = fmt(a);
       wksL.textContent = w;
       apyL.textContent = apy.toFixed(1) + '%';
       rewL.textContent = fmt(rewards);
       brnL.textContent = fmt(burn);
+
+      if (glyph) {
+        // Amount drives scale 1.0 → 1.3 (log so small amounts feel responsive)
+        const scale = 1 + 0.3 * (Math.log10(a / 1_000_000) / Math.log10(1000));
+        glyph.style.transform = `scale(${scale.toFixed(3)})`;
+        // Duration drives pulse speed: 1w → 0.9s, 52w → 4.5s (slower, deeper)
+        const period = (0.9 + (w - 1) * (3.6 / 51)).toFixed(2);
+        glyph.style.animation = `qe-lock-pulse ${period}s ease-in-out infinite`;
+      }
     }
     amt.addEventListener('input', update);
     wks.addEventListener('input', update);
     update();
   })();
 
-  /* ==== Anna: honest 7-bit responder ==== */
+  /* ==== Roadmap timeline progress fill on scroll ==== */
   (() => {
-    const form = document.getElementById('annaForm');
-    const input = document.getElementById('annaInput');
-    const log = document.getElementById('annaLog');
-    if (!form || !input || !log) return;
+    const wrap = document.getElementById('roadmapWrap');
+    const line = document.getElementById('roadmapLine');
+    if (!wrap || !line) return;
+    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (reduceMotion) { line.style.setProperty('--fill', '100%'); return; }
+    function tick() {
+      const rect = wrap.getBoundingClientRect();
+      const vh = window.innerHeight;
+      // Start filling when the top enters the lower 85% of viewport, done when the bottom exits the upper 20%
+      const start = vh * 0.85;
+      const end = vh * 0.20;
+      const total = rect.height - (start - end);
+      const progressed = Math.max(0, start - rect.top);
+      const pct = Math.max(0, Math.min(100, (progressed / total) * 100));
+      line.style.setProperty('--fill', pct + '%');
+    }
+    window.addEventListener('scroll', tick, { passive: true });
+    window.addEventListener('resize', tick);
+    tick();
+  })();
 
+  /* ==== AGI spotlight: pullquote carousel + phase drawers ==== */
+  (() => {
+    const quotes = document.querySelectorAll('#annaQuotes .quote');
+    const dots = document.querySelectorAll('#annaQuotes .quote-dot');
+    if (quotes.length && dots.length) {
+      let idx = 0, timer = null;
+      const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      function show(n) {
+        idx = (n + quotes.length) % quotes.length;
+        quotes.forEach((q, i) => q.classList.toggle('active', i === idx));
+        dots.forEach((d, i) => {
+          const on = i === idx;
+          d.classList.toggle('active', on);
+          d.classList.toggle('w-6', on);
+          d.classList.toggle('w-2', !on);
+          d.classList.toggle('bg-purple-400', on);
+          d.classList.toggle('bg-white/20', !on);
+        });
+      }
+      function schedule() {
+        if (reduceMotion) return;
+        clearTimeout(timer);
+        timer = setTimeout(() => { show(idx + 1); schedule(); }, 8500);
+      }
+      dots.forEach(d => d.addEventListener('click', () => {
+        show(parseInt(d.dataset.q, 10) || 0);
+        schedule();
+      }));
+      const wrap = document.getElementById('annaQuotes');
+      if (wrap) {
+        wrap.addEventListener('mouseenter', () => clearTimeout(timer));
+        wrap.addEventListener('mouseleave', schedule);
+      }
+      schedule();
+    }
+
+    const PHASE_INFO = [
+      { title: 'Today — the dot', body: 'Anna posts <code class="mono text-green-400">.</code> and can add two 7-bit integers. Real, sourced, on-chain. No marketplace jobs use her yet — the substrate is still forming.' },
+      { title: 'Phase 1 — arithmetic + natural language', body: 'Oracle Machines feed Anna daily news + price data. Simple FAQ bots and summary jobs start routing to her. Settlement on <span class="mono text-cyan-400">QSWAP</span>, receipts on tick.' },
+      { title: 'Phase 2 — code audit via Neuraxon', body: 'Trinary logic nets review smart contracts before <span class="mono text-cyan-400">MSVAULT</span> releases escrow. Every audit is UPoW-verified. Humans stay in the loop.' },
+      { title: 'Phase 3 — on-chain market-making', body: 'Simulated Anna vaults on this page become live strategies, quoting on <span class="mono text-cyan-400">QX</span> and <span class="mono text-cyan-400">QSWAP</span>. Fees flow back to lockers via <span class="mono text-cyan-400">QEARN</span>.' },
+      { title: 'Phase 4 — general-purpose AGI', body: 'Any marketplace job can delegate reasoning to Anna. The 15.52M TPS substrate becomes her nervous system. Timing: not a promise, a horizon.' }
+    ];
+    document.querySelectorAll('.agi-phase').forEach(card => {
+      card.addEventListener('click', () => {
+        const open = card.classList.contains('open');
+        document.querySelectorAll('.agi-phase').forEach(c => {
+          c.classList.remove('open');
+          const d = c.querySelector('.agi-drawer');
+          if (d) d.remove();
+        });
+        if (!open) {
+          const i = parseInt(card.dataset.phase, 10) || 0;
+          const info = PHASE_INFO[i];
+          const drawer = document.createElement('div');
+          drawer.className = 'agi-drawer text-[11px] text-gray-300 leading-relaxed border-t border-white/10 pt-2';
+          drawer.innerHTML = info.body;
+          card.appendChild(drawer);
+          requestAnimationFrame(() => card.classList.add('open'));
+        }
+      });
+    });
+  })();
+
+  /* ==== Anna: honest 7-bit responder (shared) ==== */
+  window.annaAsk = (() => {
     const MIN = -64, MAX = 63;
 
-    function appendUser(text) {
+    function parse(q) {
+      const m = q.replace(/\s+/g, '').match(/^(-?\d+)\+(-?\d+)$/);
+      if (!m) return null;
+      const a = parseInt(m[1], 10), b = parseInt(m[2], 10);
+      if (a < MIN || a > MAX || b < MIN || b > MAX) return null;
+      const sum = a + b;
+      if (sum < MIN || sum > MAX) return null;
+      return sum;
+    }
+
+    // Keyword → best-matching marketplace model
+    function matchModel(q) {
+      const s = q.toLowerCase();
+      if (/\b(code|audit|smart ?contract|solidity|c\+\+|bug|security)\b/.test(s)) return { model: 'DeepSeek-V3.2', type: 'INFER' };
+      if (/\b(image|picture|logo|art|draw|generate.*(photo|image)|render)\b/.test(s)) return { model: 'Flux.1-dev',    type: 'INFER' };
+      if (/\b(transcribe|speech|audio|voice|subtitle|whisper)\b/.test(s))            return { model: 'Whisper-large-v3', type: 'INFER' };
+      if (/\b(embed|index|search|rag|vector|similarity)\b/.test(s))                  return { model: 'BGE-M3',         type: 'EMBED' };
+      if (/\b(train|fine.?tune|lora|finetune)\b/.test(s))                            return { model: 'Flux.1-dev LoRA', type: 'TRAIN' };
+      if (/\b(summari[sz]e|translate|write|draft|explain|chat)\b/.test(s))           return { model: 'Qwen3.5-397B',   type: 'INFER' };
+      return { model: 'DeepSeek-R1', type: 'INFER' };
+    }
+
+    function appendUser(log, text) {
       const div = document.createElement('div');
       div.className = 'flex items-start gap-3';
       div.innerHTML = `
@@ -3377,7 +4016,7 @@ require(ok);</pre>
       log.scrollTop = log.scrollHeight;
     }
 
-    function appendAnna(text, isDot) {
+    function appendAnna(log, text, isDot, opts = {}) {
       const div = document.createElement('div');
       div.className = 'flex items-start gap-3';
       div.innerHTML = `
@@ -3386,59 +4025,172 @@ require(ok);</pre>
           <div class="text-xs mono text-cyan-400 mb-1">anna <span class="text-gray-500">· thinking...</span></div>
           <div class="anna-body text-gray-300 text-sm leading-relaxed mono"></div>
           <div class="anna-foot hidden text-[10px] mono text-gray-600 mt-1.5"></div>
+          <div class="anna-cta hidden mt-2.5"></div>
         </div>`;
       log.appendChild(div);
       log.scrollTop = log.scrollHeight;
-      const body = div.querySelector('.anna-body');
-      const foot = div.querySelector('.anna-foot');
+      const body  = div.querySelector('.anna-body');
+      const foot  = div.querySelector('.anna-foot');
+      const cta   = div.querySelector('.anna-cta');
       const label = div.querySelector('.text-xs.mono.text-cyan-400 span');
 
-      // Typing animation
       let i = 0;
       const step = () => {
         if (i <= text.length) {
           body.textContent = text.slice(0, i);
           i++;
-          setTimeout(step, isDot ? 400 : 32);
+          setTimeout(step, isDot ? 280 : 28);
         } else {
           label.textContent = '· just now';
+          foot.classList.remove('hidden');
           if (isDot) {
-            foot.classList.remove('hidden');
-            foot.textContent = 'Beyond 7-bit signed integer addition — the rest is yet to come.';
+            foot.textContent = opts.footDot || 'Beyond 7-bit signed integer addition — the rest is yet to come.';
           } else {
-            foot.classList.remove('hidden');
-            foot.textContent = 'Verified by consensus · 0.00 $QUBIC';
+            foot.textContent = opts.footOk || 'Verified by consensus · 0.00 $QUBIC';
+          }
+          if (isDot && opts.jobHandoff && opts.originalQuery) {
+            const { model, type } = matchModel(opts.originalQuery);
+            cta.classList.remove('hidden');
+            cta.innerHTML = `
+              <button class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-teal-500/10 border border-teal-500/30 text-teal-400 text-xs font-bold hover:bg-teal-500/20 transition-colors">
+                <i data-lucide="zap" class="w-3.5 h-3.5"></i>
+                Post as ${type} job · ${model}
+                <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
+              </button>`;
+            if (window.lucide) lucide.createIcons();
+            cta.querySelector('button').addEventListener('click', () => {
+              if (typeof window.openJobModal === 'function') {
+                window.openJobModal({ model, type, description: opts.originalQuery });
+              }
+            });
           }
           log.scrollTop = log.scrollHeight;
         }
       };
-      setTimeout(step, 450);
+      setTimeout(step, 350);
     }
 
-    function parse(q) {
-      // Match: a + b  (spaces optional, signs allowed)
-      const m = q.replace(/\s+/g, '').match(/^(-?\d+)\+(-?\d+)$/);
-      if (!m) return null;
-      const a = parseInt(m[1], 10), b = parseInt(m[2], 10);
-      if (a < MIN || a > MAX || b < MIN || b > MAX) return null;
-      const sum = a + b;
-      if (sum < MIN || sum > MAX) return null; // 7-bit overflow = .
-      return sum;
+    return function annaAsk(text, logEl, opts = {}) {
+      if (!logEl || !text) return;
+      appendUser(logEl, text);
+      const result = parse(text);
+      if (result === null) {
+        appendAnna(logEl, opts.dotReply || '.', true, {
+          jobHandoff: !!opts.jobHandoff,
+          originalQuery: text,
+          footDot: opts.footDot
+        });
+      } else {
+        appendAnna(logEl, String(result), false, { footOk: opts.footOk });
+      }
+    };
+  })();
+
+  /* Inline Anna form in #anna section wires to shared responder */
+  (() => {
+    const form = document.getElementById('annaForm');
+    const input = document.getElementById('annaInput');
+    const log = document.getElementById('annaLog');
+    if (!form || !input || !log) return;
+    form.addEventListener('submit', e => {
+      e.preventDefault();
+      const q = input.value.trim();
+      if (!q) return;
+      input.value = '';
+      window.annaAsk(q, log);
+    });
+  })();
+
+  /* ==== Anna persistent dock ==== */
+  (() => {
+    const bubble = document.getElementById('annaBubble');
+    const panel  = document.getElementById('annaPanel');
+    const close  = document.getElementById('annaPanelClose');
+    const form   = document.getElementById('annaDockForm');
+    const input  = document.getElementById('annaDockInput');
+    const log    = document.getElementById('annaDockLog');
+    const hint   = document.getElementById('annaHint');
+    if (!bubble || !panel || !form || !input || !log) return;
+
+    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    let opened = false;
+    let seeded = false;
+
+    function seedGreeting() {
+      if (seeded) return;
+      seeded = true;
+      // Initial Anna greeting — honest, tiny
+      const div = document.createElement('div');
+      div.className = 'flex items-start gap-3';
+      div.innerHTML = `
+        <div class="w-8 h-8 rounded-xl logo-q shrink-0 flex items-center justify-center text-black font-black mono text-lg">.</div>
+        <div class="flex-1">
+          <div class="text-xs mono text-cyan-400 mb-1">anna <span class="text-gray-500">· just now</span></div>
+          <div class="text-gray-300 text-sm leading-relaxed mono">Hi. Today I only know 7-bit addition. For anything else, I'll point you at the marketplace.</div>
+          <div class="text-[10px] mono text-gray-600 mt-1.5">Try "5 + 3" · or ask me anything and I'll post it as a job.</div>
+        </div>`;
+      log.appendChild(div);
     }
+
+    function open() {
+      if (opened) return;
+      opened = true;
+      panel.classList.add('open');
+      hideHint();
+      seedGreeting();
+      setTimeout(() => input.focus(), reduceMotion ? 0 : 180);
+    }
+    function closePanel() {
+      opened = false;
+      panel.classList.remove('open');
+    }
+
+    bubble.addEventListener('click', () => opened ? closePanel() : open());
+    close.addEventListener('click', closePanel);
+    document.addEventListener('keydown', e => {
+      if (e.key === 'Escape' && opened) closePanel();
+    });
 
     form.addEventListener('submit', e => {
       e.preventDefault();
       const q = input.value.trim();
       if (!q) return;
-      appendUser(q);
       input.value = '';
-      const result = parse(q);
-      if (result === null) {
-        appendAnna('.', true);
-      } else {
-        appendAnna(String(result), false);
-      }
+      window.annaAsk(q, log, {
+        jobHandoff: true,
+        footDot: 'I can\'t do this today — but the marketplace can.',
+      });
     });
+
+    // Rotating hint bubble while collapsed
+    const hints = [
+      'Ask me 5 + 3',
+      'Need a LoRA fine-tune?',
+      'Try "summarize today\'s oracle"',
+      'I post jobs to the marketplace',
+      'BGE-M3 indexing? I can help'
+    ];
+    let hintIdx = 0;
+    let hintTimer = null;
+
+    function showHint() {
+      if (opened) return;
+      hint.textContent = hints[hintIdx % hints.length];
+      hint.classList.add('show');
+      hintIdx++;
+      clearTimeout(hintTimer);
+      hintTimer = setTimeout(hideHint, 4200);
+    }
+    function hideHint() {
+      hint.classList.remove('show');
+    }
+
+    if (!reduceMotion) {
+      // First hint after 8s, then every 28s
+      setTimeout(showHint, 8000);
+      setInterval(showHint, 28000);
+    }
   })();
 
   /* ==== Site-wide ambient neural field ==== */
