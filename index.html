@@ -4916,7 +4916,10 @@ require(ok);</pre>
       if (seconds < 3600) return Math.floor(seconds / 60) + 'm ago';
       return Math.floor(seconds / 3600) + 'h ago';
     };
-    const shortHash = (h) => h ? (h.slice(0, 10) + '…' + h.slice(-6)) : '—';
+    // Defensive: only hex chars allowed in hash/height before reflecting into DOM
+    const safeHex = (h) => typeof h === 'string' ? h.replace(/[^a-f0-9]/gi, '').slice(0, 64) : '';
+    const safeNum = (n) => (typeof n === 'number' && isFinite(n)) ? Math.floor(Math.max(0, n)) : 0;
+    const shortHash = (h) => { const s = safeHex(h); return s ? (s.slice(0, 10) + '…' + s.slice(-6)) : '—'; };
 
     let timer = null;
     let controller = null;
@@ -4937,8 +4940,11 @@ require(ok);</pre>
       }
       const now = Date.now();
       list.innerHTML = rows.map((r, i) => {
-        const t = r.time ? new Date(r.time.replace(' ', 'T') + 'Z').getTime() : now;
+        const t = r.time ? new Date(String(r.time).replace(' ', 'T') + 'Z').getTime() : now;
         const age = (now - t) / 1000;
+        const height = safeNum(r.id || r.height);
+        const hash = safeHex(r.hash);
+        const txCount = safeNum(r.transaction_count);
         return `
           <div class="flex items-center gap-3 p-3 rounded-xl bg-white/[0.02] border border-white/5 hover:border-orange-500/30 hover:bg-orange-500/[0.04] transition-all group">
             <div class="w-9 h-9 rounded-lg bg-orange-500/10 border border-orange-500/25 flex items-center justify-center mono text-[11px] font-bold text-orange-400 shrink-0">
@@ -4946,15 +4952,15 @@ require(ok);</pre>
             </div>
             <div class="flex-1 min-w-0">
               <div class="flex items-center gap-2 flex-wrap">
-                <span class="mono text-sm font-semibold text-white">${(r.id || r.height || 0).toLocaleString()}</span>
+                <span class="mono text-sm font-semibold text-white">${height.toLocaleString()}</span>
                 <span class="text-[10px] mono text-gray-500">block</span>
                 <span class="text-gray-700">·</span>
                 <span class="text-[10px] mono text-orange-300">${fmtAge(age)}</span>
-                ${r.transaction_count ? `<span class="text-gray-700">·</span><span class="text-[10px] mono text-gray-500">${r.transaction_count} tx</span>` : ''}
+                ${txCount ? `<span class="text-gray-700">·</span><span class="text-[10px] mono text-gray-500">${txCount} tx</span>` : ''}
               </div>
-              <div class="mono text-[10px] text-gray-500 truncate mt-0.5">${shortHash(r.hash)}</div>
+              <div class="mono text-[10px] text-gray-500 truncate mt-0.5">${shortHash(hash)}</div>
             </div>
-            ${r.hash ? `<a href="https://blockchair.com/dogecoin/block/${r.hash}" target="_blank" rel="noopener" class="opacity-0 group-hover:opacity-100 transition-opacity text-gray-500 hover:text-orange-400" aria-label="View block"><i data-lucide="external-link" class="w-3.5 h-3.5"></i></a>` : ''}
+            ${hash ? `<a href="https://blockchair.com/dogecoin/block/${hash}" target="_blank" rel="noopener" class="opacity-0 group-hover:opacity-100 transition-opacity text-gray-500 hover:text-orange-400" aria-label="View block"><i data-lucide="external-link" class="w-3.5 h-3.5"></i></a>` : ''}
           </div>`;
       }).join('');
       if (window.lucide) window.lucide.createIcons();
