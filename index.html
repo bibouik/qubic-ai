@@ -302,12 +302,13 @@
   }
   .anna-panel-form button:hover { transform: scale(1.05); }
   @media (max-width: 768px) {
-    #annaDock { bottom: 12px !important; right: 12px !important; }
-    .anna-bubble { width: 48px; height: 48px; }
+    #annaDock {
+      bottom: max(12px, env(safe-area-inset-bottom)) !important;
+      right: 12px !important;
+    }
     .anna-panel { width: calc(100vw - 24px); right: -6px; max-height: 70vh; }
   }
   @media (prefers-reduced-motion: reduce) {
-    .anna-bubble::after { animation: none; }
     .anna-panel { transition: opacity 0.1s; transform: none; }
     .anna-hint { transition: opacity 0.1s; transform: none; }
   }
@@ -430,8 +431,8 @@
     pointer-events: none;
   }
   @media (max-width: 640px) {
-    .anna-pill { padding: 6px; }
-    .anna-pill .anna-pill-label, .anna-pill .anna-pill-dot { display: none; }
+    .anna-pill { padding: 6px 14px 6px 6px; gap: 8px; font-size: 12px; }
+    .anna-pill .anna-pill-icon { width: 34px; height: 34px; }
   }
   @media (prefers-reduced-motion: reduce) {
     .anna-pill::after, .anna-pill .anna-pill-dot { animation: none; }
